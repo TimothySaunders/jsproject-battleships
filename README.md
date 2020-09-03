@@ -12,8 +12,9 @@
 
 1. User places own ships
 2. Multi-square ships
-2. AI STUFF
+3. AI STUFF
     - Randomly generate AI board
     - Generate AI choice
       - Dont repeat choices
     - Difficulty settings
+4. Look good
