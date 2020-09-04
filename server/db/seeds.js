@@ -17,267 +17,265 @@ db.battleship_save.insertMany([
                 ]
             },
             grid: [
-                {                                   
+                {                                   // column 1
                     coords: {x:0, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:0, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:0, y:2},
-                    state: {hitState: "miss"}
+                    state: "miss"
                 },
                 {
                     coords: {x:0, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:0, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:0, y:5},
-                    state: {hitState: "hit"}            
+                    state: "hit"            //! matches sunk[]
                 },
                 {
                     coords: {x:0, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:0, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                   
+                {                                   // column 2
                     coords: {x:1, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                   
+                {                                   // column 3
                     coords: {x:2, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                   
+                {                                   // column 4
                     coords: {x:3, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                   
+                {                                   // column 5
                     coords: {x:4, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
-                    coords: {x:4, y:1},             
-                    state: {hitState: "hit"}
+                    coords: {x:4, y:1},              //! matches sunk[]
+                    state: "hit"
                 },
                 {
                     coords: {x:4, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                   
+                {                                   // column 6
                     coords: {x:5, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                   
+                {                                   // column 7
                     coords: {x:6, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:6},
-                    state: {hitState: "miss"}
+                    state: "miss"
                 },
                 {
                     coords: {x:6, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                   
+                {                                   // column 8
                     coords: {x:7, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 
             ] 
-                
             
-
         },                                      
         {                                       
             playerName: "Player 2",         
@@ -293,262 +291,263 @@ db.battleship_save.insertMany([
                 ]
             },
             grid: [
-                {                                   
+                {                                   // column 1
                     coords: {x:0, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:0, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:0, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:0, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:0, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:0, y:5},
-                    state: {hitState: "nothit"}            
+                    state: "untouched"            
                 },
                 {
                     coords: {x:0, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:0, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                  
+                {                                   // column 2
                     coords: {x:1, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:1, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                  
+                {                                   // column 3
                     coords: {x:2, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:1},
-                    state: {hitState: "hit"}       
+                    state: "hit"        //! matches sunk[]
                 },
                 {
                     coords: {x:2, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:2, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                  
+                {                                   // column 4
                     coords: {x:3, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:4},
-                    state: {hitState: "miss"}
+                    state: "miss"
                 },
                 {
                     coords: {x:3, y:5},
-                    state: {hitState: "hit"}            
+                    state: "hit"            //! matches sunk[]
                 },
                 {
                     coords: {x:3, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:3, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                   
+                {                                   // column 5
                     coords: {x:4, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:1},              
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:4, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                   
+                {                                   // column 6
                     coords: {x:5, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:5, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                   
+                {                                   // column 7
                     coords: {x:6, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:2},
-                    state: {hitState: "miss"}
+                    state: "miss"
                 },
                 {
                     coords: {x:6, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:6, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
-                {                                  
+                {                                   // column 8
                     coords: {x:7, y:0},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:1},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:2},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:3},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:4},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:5},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:6},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
                 {
                     coords: {x:7, y:7},
-                    state: {hitState: "nothit"}
+                    state: "untouched"
                 },
             ]               
-        }
-]);
+        },
+    ]
+);
