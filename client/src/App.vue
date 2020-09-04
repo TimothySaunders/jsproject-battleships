@@ -19,6 +19,8 @@ export default {
       // playerTurn: null,
       playerTurn: "Player 1",
       turns: 0,
+      gameRunning: false,
+      victor: ""
     };
   },
   components: {
@@ -45,6 +47,7 @@ export default {
           index += 1;
         }
       }
+      this.turns += 1;
       this.switchPlayer();
     },
     getTarget() {
@@ -68,15 +71,21 @@ export default {
       target.ships.notSunk.splice(index, 1);
       // Adds ship to sunken array
       target.ships.sunk.push(ship);
+      if (this.checkIfAllSunk(target)) {
+        this.victor = this.playerTurn;
+        this.gameRunning = false;
+      }
     },
-
-    checkIfAllSunk() {},
+    checkIfAllSunk(player) {
+      return player.ships.notSunk.length === 0;
+    },
     saveGame() {},
     pullGame() {
       GameService.getGame().then((result) => {
         this.playerOne = result[0];
         this.playerTwo = result[1];
         this.playerTurn = this.playerOne.playerName;
+        this.gameRunning = true;
       });
     },
   },
@@ -87,7 +96,11 @@ export default {
       this.checkIfHit(cell);
     });
   },
-  computed: {},
+  computed: {
+    message: function() {
+      return this.gameRunning ? `${this.playerTurn}'s turn to Fire!` : `${this.victor} Wins!` 
+    }
+  },
   watch: {},
 };
 </script>
