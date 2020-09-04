@@ -51,40 +51,14 @@ export default {
       this.turns += 1;
       this.switchPlayer();
     },
-    // getTargetOld() {
-    //   let target; // identify who is getting shot
-    //   if (this.playerOne.playerName === this.playerTurn) {
-    //     target = this.playerTwo;
-    //   } else {
-    //     target = this.playerOne;
-    //   }
-    //   return target;
-    // },
-    getTarget() {
-      // let target; // identify who is getting shot
-
+    getTarget() { // identify who is getting shot
       return this.playerOne.playerName === this.playerTurn ? this.playerTwo : this.playerOne
-      // return this.playerOne.playerName === this.playerTurn ? target = this.playerTwo : target = this.playerOne
-      
-      // return target;
     },
-    // switchPlayerOld() {
-    //   if (this.playerOne.playerName === this.playerTurn) {
-    //     this.playerTurn = this.playerTwo.playerName;
-    //   } else {
-    //     this.playerTurn = this.playerOne.playerName;
-    //   }
-    // },
+
     switchPlayer() {
       this.playerOne.playerName === this.playerTurn ? this.playerTurn = this.playerTwo.playerName : this.playerTurn = this.playerOne.playerName;
-
-
-      // if (this.playerOne.playerName === this.playerTurn) {
-      //   this.playerTurn = this.playerTwo.playerName;
-      // } else {
-      //   this.playerTurn = this.playerOne.playerName;
-      // }
     },
+    
     sinkShip(target, index, ship) {
       // Remove ship from not sunk
       target.ships.notSunk.splice(index, 1);
