@@ -21,7 +21,7 @@ export default {
       playerTurn: "Player 1",
       turns: 0,
       gameRunning: false,
-      victor: ""
+      victor: "",
     };
   },
   components: {
@@ -81,17 +81,32 @@ export default {
       return player.ships.notSunk.length === 0;
     },
     saveGame() {
-      GameService.addGame(this.data);
+      let p1 = this.playerOne;
+      let p2 = this.playerTwo;
+      const game_to_save = { game: [
+        {playerTurn: this.playerTurn},
+        {turns: this.turns},
+        {gamingRunning: this.gamingRunning},
+        {victor: this.victor},
+        this.playerOne,
+        this.playerTwo
+        // {p1},
+        // {p2}
+        ]
+       };
+
+      GameService.addGame(game_to_save);
+      // GameService.addGame(this.data);
     },
     pullGame() {
       GameService.getGame().then((result) => {
-        this.playerOne = result[4];
-        this.playerTwo = result[5];
-        this.playerTurn = result[0].playerTurn;
-        this.turns = result[1].turns;
-        this.gameRunning = result[2].gameRunning;
-        this.victor = result[3].victor;
-
+        // console.log(result[0]._id)
+        this.playerOne = result[0].game[4];
+        this.playerTwo = result[0].game[5];
+        this.playerTurn = result[0].game[0].playerTurn;
+        this.turns = result[0].game[1].turns;
+        this.gameRunning = result[0].game[2].gameRunning;
+        this.victor = result[0].game[3].victor;
 
         this.playerTurn = this.playerOne.playerName;
         this.gameRunning = true;
@@ -106,9 +121,11 @@ export default {
     });
   },
   computed: {
-    message: function() {
-      return this.gameRunning ? `${this.playerTurn}'s turn to Fire!` : `${this.victor} Wins!` 
-    }
+    message: function () {
+      return this.gameRunning
+        ? `${this.playerTurn}'s turn to Fire!`
+        : `${this.victor} Wins!`;
+    },
   },
   watch: {},
 };
