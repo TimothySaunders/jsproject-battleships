@@ -1,9 +1,13 @@
 <template>
-  <div id="app"></div>
+  <div id="app">
+    <game-grid :player="playerOne"></game-grid>
+    <game-grid :player="playerTwo"></game-grid>
+  </div>
 </template>
 
 <script>
 import GameGrid from './components/GameGrid.vue';
+import GameService from './services/GameService.js';
 
 export default {
   name: "App",
@@ -23,9 +27,19 @@ export default {
     switchPlayer() {},
     checkIfShipSunk() {},
     checkIfAllSunk() {},
-    saveGame() {}
+    saveGame() {},
+    pullGame(){
+      GameService.getGame()
+      .then(result => {
+        this.playerOne = result[0];
+        this.playerTwo = result[1];
+      });
+
+    }
   },
-  mounted() {},
+  mounted() {
+    this.pullGame();
+  },
   computed: {},
   watch: {}
 };

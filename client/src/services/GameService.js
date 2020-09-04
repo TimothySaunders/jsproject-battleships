@@ -2,7 +2,8 @@ const baseURL = "http://localhost:3000/api/game/";
 
 export default {
         getGame(){
-            return fetch(baseURL).then(res => res.json())
+            return fetch(baseURL)
+            .then(res => res.json());
         },
         // getAGameById(id){                //for LOAD a game? 
         //     return fetch(baseURL+id).then(res => res.json())
