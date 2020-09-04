@@ -37,10 +37,8 @@ export default {
             ship_coords[1] === cell.coords.y
           ) {
             cell.state = "hit";
-            // Remove ship from not sunk
-            target.ships.notSunk.splice(index, 1);
-            // Adds ship to sunken array
-            target.ships.sunk.push(ship);
+            // If there is a hit sink the ship
+            this.sinkShip(target, index, ship);
           } else {
             cell.state = "miss";
           }
@@ -65,7 +63,13 @@ export default {
         this.playerTurn = this.playerOne.playerName;
       }
     },
-    checkIfShipSunk() {},
+    sinkShip(target, index, ship) {
+      // Remove ship from not sunk
+      target.ships.notSunk.splice(index, 1);
+      // Adds ship to sunken array
+      target.ships.sunk.push(ship);
+    },
+
     checkIfAllSunk() {},
     saveGame() {},
     pullGame() {
