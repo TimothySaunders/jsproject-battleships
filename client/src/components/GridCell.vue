@@ -25,15 +25,20 @@ export default {
         border-bottom: 1px solid black;
         border-left: 1px solid black;
         text-align: center;
+        cursor: crosshair;
     }
     .cell > p {
         font-size: 2.5em;
         margin: 0;
+        user-select: none;
     }
     .hit > p {
         color: red;
     }
     .miss > p {
         color: white;
+    }
+    .untouched:hover {
+        border: 3px solid black;
     }
 </style>
