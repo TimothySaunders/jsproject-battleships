@@ -1,28 +1,36 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <div id="app"></div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import GameGrid from './components/GameGrid.vue';
 
 export default {
-  name: 'App',
+  name: "App",
+  data() {
+    return {
+      playerOne: {},
+      playerTwo: {},
+      playerTurn: null,
+      turns: 0
+    };
+  },
   components: {
-    HelloWorld
-  }
-}
+    'game-grid': GameGrid
+  },
+  methods: {
+    checkIfHit() {},
+    switchPlayer() {},
+    checkIfShipSunk() {},
+    checkIfAllSunk() {},
+    saveGame() {}
+  },
+  mounted() {},
+  computed: {},
+  watch: {}
+};
 </script>
 
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>
