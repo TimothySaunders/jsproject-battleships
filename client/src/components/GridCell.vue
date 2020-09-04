@@ -14,7 +14,8 @@ export default {
     props: ['cell'],
     methods: {
         handleSelect(){
-            eventBus.$emit('cell-selected', this.cell)
+            eventBus.$emit('cell-selected', this.cell);
+            // console.log("cell clicked");
         }
     }
 }
