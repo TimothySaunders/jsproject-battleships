@@ -1,6 +1,6 @@
 <template>
     <section class="grid">
-        <grid-cell v-for="(cell, key) in player.grid" :key="key" :cell="cell" :id="cell.coords"/>
+        <grid-cell v-for="(cell, key) in player.grid" :key="key" :cell="cell" :id="cell.coords.x + cell.coords.y"/>
     </section>
 </template>
 
