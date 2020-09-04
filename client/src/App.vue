@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import GameGrid from './components/GameGrid.vue';
+
 export default {
   name: "App",
   data() {
