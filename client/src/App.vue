@@ -7,14 +7,14 @@ export default {
   name: "App",
   data() {
     return {
-      playerOne: [],
-      playerTwo: [],
+      playerOne: {},
+      playerTwo: {},
       playerTurn: null,
       turns: 0
     };
   },
   components: {
-    //game-grid
+    'game-grid': GameGrid
   },
   methods: {
     checkIfHit() {},
