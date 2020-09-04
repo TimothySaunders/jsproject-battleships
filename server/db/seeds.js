@@ -3,7 +3,11 @@ use battleships_save_data;
 db.dropDatabase();
 
 db.battleship_save.insertMany([
-        {                                   
+    {playerTurn: "Player 1"},         // 0
+    {turns:0},                  // 1
+    {gamingRunning: true},
+    {victor: ""},    
+    {                                   
             playerName: "Player 1",         
             ships: {                        
                 notSunk: [                    
@@ -283,7 +287,7 @@ db.battleship_save.insertMany([
                 notSunk: [                  
                     [[1,1]],                
                     [[2,3]],
-                    [[4,4]],                
+                    [[4,4]],             
                 ],                
                 sunk: [                     
                     [[3,5]],               

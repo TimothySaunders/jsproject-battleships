@@ -15,6 +15,7 @@ export default {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             })
+            .then(res => res.json());
         },
         updateGame(_id, payload) {
             return fetch(baseURL+id, {

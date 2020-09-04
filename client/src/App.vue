@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <button v-on:click="saveGame">Save Game</button>
     <game-grid :player="playerOne"></game-grid>
     <game-grid :player="playerTwo"></game-grid>
   </div>
@@ -79,11 +80,19 @@ export default {
     checkIfAllSunk(player) {
       return player.ships.notSunk.length === 0;
     },
-    saveGame() {},
+    saveGame() {
+      GameService.addGame(this.data);
+    },
     pullGame() {
       GameService.getGame().then((result) => {
-        this.playerOne = result[0];
-        this.playerTwo = result[1];
+        this.playerOne = result[4];
+        this.playerTwo = result[5];
+        this.playerTurn = result[0].playerTurn;
+        this.turns = result[1].turns;
+        this.gameRunning = result[2].gameRunning;
+        this.victor = result[3].victor;
+
+
         this.playerTurn = this.playerOne.playerName;
         this.gameRunning = true;
       });
