@@ -12,7 +12,9 @@ export default {
     props: ['cell'],
     methods: {
         handleSelect(){
-            eventBus.$emit('cell-selected', this.cell)
+            if (this.cell.state === "untouched") {
+                eventBus.$emit('cell-selected', this.cell)
+            }
         }
     }
 }
