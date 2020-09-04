@@ -2,7 +2,7 @@
   <div v-on:click="handleSelect()">
       <!-- <img src="" alt="" v-if="cell.state === 'hit'">
       <img src="" alt="" v-if="cell.state === 'nothit'"> -->
-      <p>{{ cell.playerName }}</p>
+      <p>{{ cell.coords }}</p>
   </div>
 </template>
 
