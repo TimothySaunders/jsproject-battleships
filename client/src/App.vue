@@ -51,21 +51,39 @@ export default {
       this.turns += 1;
       this.switchPlayer();
     },
+    // getTargetOld() {
+    //   let target; // identify who is getting shot
+    //   if (this.playerOne.playerName === this.playerTurn) {
+    //     target = this.playerTwo;
+    //   } else {
+    //     target = this.playerOne;
+    //   }
+    //   return target;
+    // },
     getTarget() {
-      let target; // identify who is getting shot
-      if (this.playerOne.playerName === this.playerTurn) {
-        target = this.playerTwo;
-      } else {
-        target = this.playerOne;
-      }
-      return target;
+      // let target; // identify who is getting shot
+
+      return this.playerOne.playerName === this.playerTurn ? this.playerTwo : this.playerOne
+      // return this.playerOne.playerName === this.playerTurn ? target = this.playerTwo : target = this.playerOne
+      
+      // return target;
     },
+    // switchPlayerOld() {
+    //   if (this.playerOne.playerName === this.playerTurn) {
+    //     this.playerTurn = this.playerTwo.playerName;
+    //   } else {
+    //     this.playerTurn = this.playerOne.playerName;
+    //   }
+    // },
     switchPlayer() {
-      if (this.playerOne.playerName === this.playerTurn) {
-        this.playerTurn = this.playerTwo.playerName;
-      } else {
-        this.playerTurn = this.playerOne.playerName;
-      }
+      this.playerOne.playerName === this.playerTurn ? this.playerTurn = this.playerTwo.playerName : this.playerTurn = this.playerOne.playerName;
+
+
+      // if (this.playerOne.playerName === this.playerTurn) {
+      //   this.playerTurn = this.playerTwo.playerName;
+      // } else {
+      //   this.playerTurn = this.playerOne.playerName;
+      // }
     },
     sinkShip(target, index, ship) {
       // Remove ship from not sunk
@@ -81,22 +99,19 @@ export default {
       return player.ships.notSunk.length === 0;
     },
     saveGame() {
-      let p1 = this.playerOne;
-      let p2 = this.playerTwo;
-      const game_to_save = { game: [
-        {playerTurn: this.playerTurn},
-        {turns: this.turns},
-        {gamingRunning: this.gamingRunning},
-        {victor: this.victor},
-        this.playerOne,
-        this.playerTwo
-        // {p1},
-        // {p2}
-        ]
-       };
+     
+      const game_to_save = {
+        game: [
+          { playerTurn: this.playerTurn },
+          { turns: this.turns },
+          { gamingRunning: this.gamingRunning },
+          { victor: this.victor },
+          this.playerOne,
+          this.playerTwo,
+        ],
+      };
 
       GameService.addGame(game_to_save);
-      // GameService.addGame(this.data);
     },
     pullGame() {
       GameService.getGame().then((result) => {
