@@ -1,21 +1,18 @@
-use batteshipGames;
+use battleships_save_data;
 
-db.dropdatabase();
+db.dropDatabase();
 
-db.games.insertOne(
-    [
-        {                                   //!PLAYER 1 START
-            playerName: "Player 1",         // name for player
+db.battleship_save.insertMany([
+        {                                   
+            playerName: "Player 1",         
             ships: {                        
-                notSunk: [                  // start of list active ships  
-                    [[2,3]],                // ships are a list of coords
+                notSunk: [                    
+                    [[2,3]],                
                     [[0,1]],
                     [[0,3]],                
-                    //[[5,4],[5,5]],          //  EXT 
-                    //[[0,1],[0,2][0,3]]      //  EXT
                 ],                
-                sunk: [                     // start of sunk ships list
-                    [[0,5]],                // just 2 for the demo
+                sunk: [                     
+                    [[0,5]],                
                     [[4,1]]
                 ]
             },
@@ -278,23 +275,18 @@ db.games.insertOne(
                 },
                 
             ] 
-                
             
-
-        },                                      //! END OF PLAYER 1
-
-        {                                       //! PLAYER 2 START
-            playerName: "Player 2",         // name for player 2
+        },                                      
+        {                                       
+            playerName: "Player 2",         
             ships: {                        
-                notSunk: [                  // start of list active ships  
-                    [[1,1]],                // ships are a list of coords
+                notSunk: [                  
+                    [[1,1]],                
                     [[2,3]],
                     [[4,4]],                
-                    //[[3,4],[3,5]],          //  EXT 
-                    //[[0,0],[0,1][0,2]]      //  EXT
                 ],                
-                sunk: [                     // start of sunk ships list
-                    [[3,5]],                // just 2 for the demo
+                sunk: [                     
+                    [[3,5]],               
                     [[2,1]]
                 ]
             },
