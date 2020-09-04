@@ -16,6 +16,11 @@ export default {
 
 <style>
     .grid{
+        background-image: url('../assets/ocean1.jpg');
+        background-size: 100% 100%;
+        width: 40%;
+        border-top: 1px solid black;
+        border-right: 1px solid black;
         display: grid;
         grid-template-areas:
         "00 01 02 03 04 05 06 07"
@@ -25,7 +30,9 @@ export default {
         "40 41 42 43 44 45 46 47"
         "50 51 52 53 54 55 56 57"
         "60 61 62 63 64 65 66 67"
-        "70 71 72 73 74 75 76 77"
+        "70 71 72 73 74 75 76 77";
+        grid-template-rows: repeat(8, 1fr);
+        grid-template-columns: repeat(8, 1fr);
     }
 
     #g-00{
@@ -220,5 +227,5 @@ export default {
     #g-77{
         grid-area: "77";
     }
-    
+
 </style>

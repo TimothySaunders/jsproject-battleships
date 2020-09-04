@@ -47,4 +47,8 @@ export default {
 
 
 <style>
+  #app {
+    display: flex;
+    justify-content: space-around;
+  }
 </style>
