@@ -1,4 +1,4 @@
-const baseURL = "http://localhost:3000/api/battelships/";
+const baseURL = "http://localhost:3000/api/game/";
 
 export default {
         getGame(){
