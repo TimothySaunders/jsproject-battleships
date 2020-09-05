@@ -1,6 +1,6 @@
 <template>
   <div v-on:click="handleSelect()" class="cell" :class="[cell.state, noBorder]">
-      <p v-if="cell.state !== 'untouched'">&#x25CF</p>
+      <p v-if="cell.state !== 'untouched'">&#x25CF;</p>
       <div v-if="hasShip" class="ship"></div>
   </div>
 </template>
@@ -10,7 +10,7 @@ import { eventBus } from '../main';
 
 export default {
     name: 'grid-cell',
-    props: ['cell', 'noBorder'],
+    props: ['cell', 'noBorder', 'ships'],
     data(){
         return {
             hasShip: false
