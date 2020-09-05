@@ -6,7 +6,7 @@
       :cell="cell"
       :id="'g-' + cell.coords.x + cell.coords.y"
       :noBorder="noBorder"
-      :ships="player.ships.nothit"
+      :ships="player.ships.notSunk"
     ></grid-cell>
   </section>
 </template>
