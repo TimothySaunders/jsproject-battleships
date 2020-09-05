@@ -18,11 +18,10 @@ db.battleship_save.insertMany(
                             [[2, 3]],
                             [[0, 1]],
                             [[0, 3]],
-                        ],
-                        sunk: [
                             [[0, 5]],
                             [[4, 1]]
-                        ]
+                        ],
+                        sunk: []
                     },
                     grid: [
                         {                                   // column 1
@@ -292,11 +291,10 @@ db.battleship_save.insertMany(
                             [[1, 1]],
                             [[2, 3]],
                             [[4, 4]],
-                        ],
-                        sunk: [
                             [[3, 5]],
                             [[2, 1]]
-                        ]
+                        ],
+                        sunk: []
                     },
                     grid: [
                         {                                   // column 1
