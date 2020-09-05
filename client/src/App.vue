@@ -63,6 +63,7 @@ export default {
       target.ships.notSunk.splice(index, 1);
       // Adds ship to sunken array
       target.ships.sunk.push(ship);
+      // Sets the winner and ends the game if all ships of target are sunk
       this.checkIfAllSunk(target) ? (this.victor = this.playerTurn, this.gameRunning = false) : this.gameRunning = true;
     },
     
