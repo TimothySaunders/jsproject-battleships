@@ -17,20 +17,30 @@ export default {
   name: "game-grid",
   data() {
     return {
-      noBorder: "",
+    //   noBorder: "",
     };
   },
   props: ["player", "playerTurn"],
   components: { "grid-cell": GridCell },
   methods: {
     currentPlayer() {
-      if (playerTurn === player.playerName) {
+        console.log("1.5")
+        console.log(this.playerTurn, this.player)
+      if (this.playerTurn === this.player.playerName) {
+        // console.log('something')
         this.noBorder = "no-highlight";
       }
     },
   },
-  mounted() {},
-};
+  computed: {
+      noBorder (){
+        if (this.playerTurn === this.player.playerName) {
+        // console.log('something')
+        return "no-highlight";
+        }
+    }
+  }
+}
 </script>
 
 <style>

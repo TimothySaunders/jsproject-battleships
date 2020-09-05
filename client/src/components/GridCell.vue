@@ -1,5 +1,5 @@
 <template>
-  <div v-on:click="handleSelect()" class="cell" :class="cell.state + ' ' + no-highlight">
+  <div v-on:click="handleSelect()" class="cell" :class="[cell.state, noBorder]">
       <p v-if="cell.state !== 'untouched'">&#x25CF</p>
   </div>
 </template>
@@ -12,7 +12,7 @@ export default {
     props: ['cell', 'noBorder'],
     methods: {
         handleSelect(){
-            if (this.cell.state === "untouched") {
+            if (this.cell.state === "untouched" && !this.noBorder) {
                 eventBus.$emit('cell-selected', this.cell)
             }
         }
@@ -44,5 +44,7 @@ export default {
     .no-highlight:hover {
         border-bottom: 1px solid black;
         border-left: 1px solid black;
+        border-right: none;
+        border-top: none;
     }
 </style>

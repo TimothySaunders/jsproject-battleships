@@ -35,10 +35,15 @@ export default {
 
       target.ships.notSunk.forEach((ship) => {
         let index = 0;
+        const key = 8*cell.coords.x + cell.coords.y;
         ship.forEach((ship_coords) => {
-          ship_coords[0] === cell.coords.x && ship_coords[1] === cell.coords.y    // Checks if the coords of the ship selected has a ship in it
-            ? ((cell.state = "hit"), this.sinkShip(target, index, ship))          // If there is a hit sink the ship
-            : (cell.state = "miss");
+          if (ship_coords[0] === cell.coords.x && ship_coords[1] === cell.coords.y) {   // Checks if the coords of the ship selected has a ship in it
+            console.log(target.grid, key)
+            target.grid[key].state = "hit";
+            this.sinkShip(target, index, ship);         // If there is a hit sink the ship
+          } else {
+            (target.grid[key].state = "miss");
+          }
           index += 1;
         });
       });
