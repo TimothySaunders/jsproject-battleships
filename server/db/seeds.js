@@ -158,7 +158,7 @@ db.battleship_save.insertMany(
                         },
                         {
                             coords: { x: 4, y: 1 },              //! matches sunk[]
-                            state: "hit"
+                            state: "untouched"
                         },
                         {
                             coords: { x: 4, y: 2 },
