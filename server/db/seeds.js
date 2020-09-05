@@ -34,7 +34,7 @@ db.battleship_save.insertMany(
                         },
                         {
                             coords: { x: 0, y: 2 },
-                            state: "miss"
+                            state: "untouched"
                         },
                         {
                             coords: { x: 0, y: 3 },
@@ -46,7 +46,7 @@ db.battleship_save.insertMany(
                         },
                         {
                             coords: { x: 0, y: 5 },
-                            state: "hit"            //! matches sunk[]
+                            state: "untouched"           //! matches sunk[]
                         },
                         {
                             coords: { x: 0, y: 6 },
@@ -242,7 +242,7 @@ db.battleship_save.insertMany(
                         },
                         {
                             coords: { x: 6, y: 6 },
-                            state: "miss"
+                            state: "untouched"
                         },
                         {
                             coords: { x: 6, y: 7 },
@@ -367,7 +367,7 @@ db.battleship_save.insertMany(
                         },
                         {
                             coords: { x: 2, y: 1 },
-                            state: "hit"        //! matches sunk[]
+                            state: "untouched"       //! matches sunk[]
                         },
                         {
                             coords: { x: 2, y: 2 },
@@ -411,11 +411,11 @@ db.battleship_save.insertMany(
                         },
                         {
                             coords: { x: 3, y: 4 },
-                            state: "miss"
+                            state: "untouched"
                         },
                         {
                             coords: { x: 3, y: 5 },
-                            state: "hit"            //! matches sunk[]
+                            state: "untouched"           //! matches sunk[]
                         },
                         {
                             coords: { x: 3, y: 6 },
@@ -499,7 +499,7 @@ db.battleship_save.insertMany(
                         },
                         {
                             coords: { x: 6, y: 2 },
-                            state: "miss"
+                            state: "untouched"
                         },
                         {
                             coords: { x: 6, y: 3 },
