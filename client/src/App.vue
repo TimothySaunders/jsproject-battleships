@@ -28,37 +28,36 @@ export default {
     "game-grid": GameGrid,
   },
   methods: {
-    checkIfHit(cell) {
+    checkIfHit(cell) { //! NEW version
+      
       let target = this.getTarget();
 
-      for (let ship of target.ships.notSunk) {
-        const index = 0; // index of ship whithin ships, being looped through
-        for (let ship_coords of ship) {
-          if (
-            // Checks if the coords of the ship selected has a ship in it
-            ship_coords[0] === cell.coords.x &&
-            ship_coords[1] === cell.coords.y
-          ) {
-            cell.state = "hit";
-            // If there is a hit sink the ship
-            this.sinkShip(target, index, ship);
-          } else {
-            cell.state = "miss";
-          }
+      target.ships.notSunk.forEach((ship) => {
+        let index = 0;
+        ship.forEach((ship_coords) => {
+          ship_coords[0] === cell.coords.x && ship_coords[1] === cell.coords.y    // Checks if the coords of the ship selected has a ship in it
+            ? ((cell.state = "hit"), this.sinkShip(target, index, ship))          // If there is a hit sink the ship
+            : (cell.state = "miss");
           index += 1;
-        }
-      }
+        });
+      });
+
       this.turns += 1;
       this.switchPlayer();
     },
-    getTarget() { // identify who is getting shot
-      return this.playerOne.playerName === this.playerTurn ? this.playerTwo : this.playerOne
+    getTarget() {
+      // identify who is getting shot
+      return this.playerOne.playerName === this.playerTurn
+        ? this.playerTwo
+        : this.playerOne;
     },
 
     switchPlayer() {
-      this.playerOne.playerName === this.playerTurn ? this.playerTurn = this.playerTwo.playerName : this.playerTurn = this.playerOne.playerName;
+      this.playerOne.playerName === this.playerTurn
+        ? (this.playerTurn = this.playerTwo.playerName)
+        : (this.playerTurn = this.playerOne.playerName);
     },
-    
+
     sinkShip(target, index, ship) {
       // Remove ship from not sunk
       target.ships.notSunk.splice(index, 1);
@@ -73,7 +72,6 @@ export default {
       return player.ships.notSunk.length === 0;
     },
     saveGame() {
-     
       const game_to_save = {
         game: [
           { playerTurn: this.playerTurn },
