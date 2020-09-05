@@ -15,6 +15,28 @@ export default {
             if (this.cell.state === "untouched" && !this.noBorder) {
                 eventBus.$emit('cell-selected', this.cell)
             }
+        },
+        shipCheck: function() {
+            // Loop through ships
+            this.ships.forEach((ship) => {
+
+                // Loop through the ships coords
+                ship.forEach((cell) => {
+                    // Turn the ship coords into string
+                    const ship_coord = String(cell).split(',');
+                    const current_coord = ship_coord[0] + ship_coord[1];
+
+                    // Get just coords from cell id
+                    const cell_coords = this.cell.coords.x + "" + this.cell.coords.y;
+                    
+                    // Check both coords
+                    if (current_coord === cell_coords){
+                        this.hasShip = true;
+                        console.log(cell_coords + "hasShip:", true);
+                    }
+                });
+
+            });
         }
     }
 }
