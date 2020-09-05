@@ -63,11 +63,9 @@ export default {
       target.ships.notSunk.splice(index, 1);
       // Adds ship to sunken array
       target.ships.sunk.push(ship);
-      if (this.checkIfAllSunk(target)) {
-        this.victor = this.playerTurn;
-        this.gameRunning = false;
-      }
+      this.checkIfAllSunk(target) ? (this.victor = this.playerTurn, this.gameRunning = false) : this.gameRunning = true;
     },
+    
     checkIfAllSunk(player) {
       return player.ships.notSunk.length === 0;
     },
