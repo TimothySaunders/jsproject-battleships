@@ -2,8 +2,8 @@
   <div id="app">
     <h3>{{ message }}</h3>
     <button v-on:click="saveGame">Save Game</button>
-    <game-grid :player="playerOne" :playerTurn="playerTurn"></game-grid>
-    <game-grid :player="playerTwo" :playerTurn="playerTurn"></game-grid>
+    <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameRunning"></game-grid>
+    <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameRunning"></game-grid>
   </div>
 </template>
 
@@ -29,25 +29,35 @@ export default {
     "game-grid": GameGrid,
   },
   methods: {
-    checkIfHit(cell) { //! NEW version
-      
+    checkIfHit(cell) {
       let target = this.getTarget();
+      const key = 8 * cell.coords.x + cell.coords.y; 
+      let isHit;
+      let shipToSinkIndex;
+      let shipToSink;
 
       target.ships.notSunk.forEach((ship) => {
         let index = 0;
-        const key = 8*cell.coords.x + cell.coords.y;
-        ship.forEach((ship_coords) => {
-          if (ship_coords[0] === cell.coords.x && ship_coords[1] === cell.coords.y) {   // Checks if the coords of the ship selected has a ship in it
-            target.grid[key].state = "hit";
-            this.sinkShip(target, index, ship);         // If there is a hit sink the ship
-          }
-          index += 1;
-        });
-        if (target.grid[key].state != "hit"){   // if no hits after looping through all unsunk ship coords then must be a miss
-          target.grid[key].state = "miss"
-        };
-      });
 
+        ship.forEach((ship_coords) => {
+          if (
+            ship_coords[0] === cell.coords.x &&
+            ship_coords[1] === cell.coords.y
+          ) {
+            // Checks if the coords of the ship selected has a ship in it
+            isHit = true;
+            shipToSinkIndex = index;
+            shipToSink = ship;
+          }
+        });
+        index += 1;
+      });
+      if (isHit) {
+        this.sinkShip(target, shipToSinkIndex, shipToSink);
+        target.grid[key].state = "hit";
+      } else {
+        target.grid[key].state = "miss";
+      }
       this.turns += 1;
       this.switchPlayer();
     },
@@ -65,19 +75,22 @@ export default {
     },
 
     sinkShip(target, index, ship) {
-      // Remove ship from not sunk
-      target.ships.notSunk.splice(index, 1);
       // Adds ship to sunken array
       target.ships.sunk.push(ship);
       // Sets the winner and ends the game if all ships of target are sunk
-      this.checkIfAllSunk(target) ? (this.victor = this.playerTurn, this.gameRunning = false) : this.gameRunning = true;
+      this.checkIfAllSunk(target)
+        ? ((this.victor = this.playerTurn),
+          (this.gameRunning = false),
+          (this.playerTurn = null))
+        : (this.gameRunning = true);
     },
-    
+
     checkIfAllSunk(player) {
-      return player.ships.notSunk.length === 0;
+      return player.ships.notSunk.length === player.ships.sunk.length;
     },
     saveGame() {
-      const game_to_save = {                  // creates a game object to hold current game state and populates game_to_save with current state
+      const game_to_save = {
+        // creates a game object to hold current game state and populates game_to_save with current state
         game: [
           { playerTurn: this.playerTurn },
           { turns: this.turns },
@@ -91,8 +104,8 @@ export default {
       GameService.addGame(game_to_save);
     },
     pullGame() {
-      GameService.getGame().then((result) => {      // takes seed game at array index 0
-        // console.log(result[0]._id)
+      GameService.getGame().then((result) => {
+        // takes seed game at array index 0
         this.playerOne = result[0].game[4];
         this.playerTwo = result[0].game[5];
         this.playerTurn = result[0].game[0].playerTurn;
@@ -113,7 +126,8 @@ export default {
     });
   },
   computed: {
-    message: function () {                      // Provides feedback to the user describing current game state
+    message: function () {
+      // Provides feedback to the user describing current game state
       return this.gameRunning
         ? `${this.playerTurn}'s turn to Fire!`
         : `${this.victor} Wins!`;
@@ -125,8 +139,8 @@ export default {
 
 
 <style>
-  #app {
-    display: flex;
-    justify-content: space-around;
-  }
+#app {
+  display: flex;
+  justify-content: space-around;
+}
 </style>

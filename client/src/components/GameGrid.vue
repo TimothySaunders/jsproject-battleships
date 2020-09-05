@@ -7,6 +7,7 @@
       :id="'g-' + cell.coords.x + cell.coords.y"
       :noBorder="noBorder"
       :ships="player.ships.notSunk"
+      :gameState="gameState"
     ></grid-cell>
   </section>
 </template>
@@ -16,27 +17,11 @@ import GridCell from "./GridCell.vue";
 
 export default {
   name: "game-grid",
-  data() {
-    return {
-    //   noBorder: "",
-    };
-  },
-  props: ["player", "playerTurn"],
+  props: ["player", "playerTurn", "gameState"],
   components: { "grid-cell": GridCell },
-  methods: {
-    currentPlayer() {
-        console.log("1.5")
-        console.log(this.playerTurn, this.player)
-      if (this.playerTurn === this.player.playerName) {
-        // console.log('something')
-        this.noBorder = "no-highlight";
-      }
-    },
-  },
   computed: {
       noBorder (){
         if (this.playerTurn === this.player.playerName) {
-        // console.log('something')
         return "no-highlight";
         }
     }
@@ -45,26 +30,6 @@ export default {
 </script>
 
 <style>
-.grid {
-  background-image: url("../assets/ocean1.jpg");
-  background-size: 100% 100%;
-  width: 40%;
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  display: grid;
-  grid-template-areas:
-    "00 01 02 03 04 05 06 07"
-    "10 11 12 13 14 15 16 17"
-    "20 21 22 23 24 25 26 27"
-    "30 31 32 33 34 35 36 37"
-    "40 41 42 43 44 45 46 47"
-    "50 51 52 53 54 55 56 57"
-    "60 61 62 63 64 65 66 67"
-    "70 71 72 73 74 75 76 77";
-  grid-template-rows: repeat(8, 1fr);
-  grid-template-columns: repeat(8, 1fr);
-}
-
 #g-00 {
   grid-area: "00";
 }
@@ -256,5 +221,24 @@ export default {
 }
 #g-77 {
   grid-area: "77";
+}
+.grid {
+  background-image: url("../assets/ocean1.jpg");
+  background-size: 100% 100%;
+  width: 40%;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  display: grid;
+  grid-template-areas:
+    "70 71 72 73 74 75 76 77"
+    "60 61 62 63 64 65 66 67"
+    "50 51 52 53 54 55 56 57"
+    "40 41 42 43 44 45 46 47"
+    "30 31 32 33 34 35 36 37"
+    "20 21 22 23 24 25 26 27"
+    "10 11 12 13 14 15 16 17"
+    "00 01 02 03 04 05 06 07";
+  grid-template-rows: repeat(8, 1fr);
+  grid-template-columns: repeat(8, 1fr);
 }
 </style>
