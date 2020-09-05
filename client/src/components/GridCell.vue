@@ -10,7 +10,7 @@ import { eventBus } from '../main';
 
 export default {
     name: 'grid-cell',
-    props: ['cell', 'noBorder', 'ships'],
+    props: ['cell', 'noBorder', 'ships', "gameState"],
     data(){
         return {
             hasShip: false
@@ -18,8 +18,11 @@ export default {
     },
     methods: {
         handleSelect(){
-            if (this.cell.state === "untouched" && !this.noBorder) {
-                eventBus.$emit('cell-selected', this.cell)
+            while( this.gameState === true ){
+                if (this.cell.state === "untouched" && !this.noBorder) {
+                    eventBus.$emit('cell-selected', this.cell)
+                }
+                break
             }
         },
         shipCheck: function() {
