@@ -1,5 +1,5 @@
 <template>
-  <div v-on:click="handleSelect()" class="cell" :class="cell.state">
+  <div v-on:click="handleSelect()" class="cell" :class="cell.state + ' ' + no-highlight">
       <p v-if="cell.state !== 'untouched'">&#x25CF</p>
   </div>
 </template>
@@ -9,7 +9,7 @@ import { eventBus } from '../main';
 
 export default {
     name: 'grid-cell',
-    props: ['cell'],
+    props: ['cell', 'noBorder'],
     methods: {
         handleSelect(){
             if (this.cell.state === "untouched") {
@@ -40,5 +40,9 @@ export default {
     }
     .untouched:hover {
         border: 3px solid black;
+    }
+    .no-highlight:hover {
+        border-bottom: 1px solid black;
+        border-left: 1px solid black;
     }
 </style>
