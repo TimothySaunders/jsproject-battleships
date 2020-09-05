@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <h3>{{ message }}</h3>
     <button v-on:click="saveGame">Save Game</button>
     <game-grid :player="playerOne"></game-grid>
     <game-grid :player="playerTwo"></game-grid>
@@ -71,7 +72,7 @@ export default {
       return player.ships.notSunk.length === 0;
     },
     saveGame() {
-      const game_to_save = {
+      const game_to_save = {                  // creates a game object to hold current game state and populates game_to_save with current state
         game: [
           { playerTurn: this.playerTurn },
           { turns: this.turns },
@@ -85,7 +86,7 @@ export default {
       GameService.addGame(game_to_save);
     },
     pullGame() {
-      GameService.getGame().then((result) => {
+      GameService.getGame().then((result) => {      // takes seed game at array index 0
         // console.log(result[0]._id)
         this.playerOne = result[0].game[4];
         this.playerTwo = result[0].game[5];
@@ -107,7 +108,7 @@ export default {
     });
   },
   computed: {
-    message: function () {
+    message: function () {                      // Provides feedback to the user describing current game state
       return this.gameRunning
         ? `${this.playerTurn}'s turn to Fire!`
         : `${this.victor} Wins!`;
