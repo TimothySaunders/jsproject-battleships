@@ -18,7 +18,7 @@ export default {
     },
     methods: {
         handleSelect(){
-            while( this.gameState === true ){
+            while( this.gameState === 'inGame' ){
                 if (this.cell.state === "untouched" && !this.noBorder) {
                     eventBus.$emit('cell-selected', this.cell)
                     this.hasShip = false;

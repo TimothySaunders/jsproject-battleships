@@ -2,10 +2,12 @@
   <div id="app">
     <h3>{{ message }}</h3>
     <button v-on:click="saveGame">Save Game</button>
+
     <main>
-      <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameRunning"></game-grid>
-      <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameRunning"></game-grid>
+      <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+      <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
     </main>
+
   </div>
 </template>
 
@@ -23,7 +25,7 @@ export default {
       // playerTurn: null,
       playerTurn: "Player 1",
       turns: 0,
-      gameRunning: false,
+      gameState: "",
       victor: "",
     };
   },
@@ -82,9 +84,9 @@ export default {
       // Sets the winner and ends the game if all ships of target are sunk
       this.checkIfAllSunk(target)
         ? ((this.victor = this.playerTurn),
-          (this.gameRunning = false),
+          (this.gameState = 'endGame'),
           (this.playerTurn = null))
-        : (this.gameRunning = true);
+        : (this.gameState = 'inGame');
     },
 
     checkIfAllSunk(player) {
@@ -112,11 +114,11 @@ export default {
         this.playerTwo = result[0].game[5];
         this.playerTurn = result[0].game[0].playerTurn;
         this.turns = result[0].game[1].turns;
-        this.gameRunning = result[0].game[2].gameRunning;
+        this.gameState = result[0].game[2].gameState;
         this.victor = result[0].game[3].victor;
 
         this.playerTurn = this.playerOne.playerName;
-        this.gameRunning = true;
+        this.gameState = 'inGame';
       });
     }
   },
@@ -130,7 +132,7 @@ export default {
   computed: {
     message: function() {
       // Provides feedback to the user describing current game state
-      return this.gameRunning
+      return this.gameState==='inGame'
         ? `${this.playerTurn}'s turn to Fire!`
         : `${this.victor} Wins!`;
     }
