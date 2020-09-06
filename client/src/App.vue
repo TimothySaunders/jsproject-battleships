@@ -10,6 +10,12 @@
 <script>
 import GameGrid from "./components/GameGrid.vue";
 import GameService from "./services/GameService.js";
+import GoodBrain from "./services/GoodBrain.js";           //! AI
+  
+const themessage = GoodBrain.printSomething();             //! AI  
+console.log(themessage);                                   //! AI
+
+
 import { eventBus } from "@/main.js";
 
 export default {
@@ -58,6 +64,7 @@ export default {
       } else {
         target.grid[key].state = "miss";
       }
+      this.registerHitToMemory(cell);
       this.turns += 1;
       this.switchPlayer();
     },
@@ -66,6 +73,11 @@ export default {
       return this.playerOne.playerName === this.playerTurn
         ? this.playerTwo
         : this.playerOne;
+    },
+    getShooter(){
+      return this.playerOne.playerName === this.playerTurn
+        ? this.playerOne
+        : this.playerTwo;
     },
 
     switchPlayer() {
@@ -88,6 +100,14 @@ export default {
     checkIfAllSunk(player) {
       return player.ships.notSunk.length === player.ships.sunk.length;
     },
+    registerHitToMemory( cell){            //! AI
+      let shooter = this.getShooter();
+      shooter.brain.hitHistory.push(cell)
+    },          
+    establishTargets(){                   //! AI
+      
+    },
+    
     saveGame() {
       const game_to_save = {
         // creates a game object to hold current game state and populates game_to_save with current state
@@ -104,6 +124,7 @@ export default {
       GameService.addGame(game_to_save);
     },
     pullGame() {
+       
       GameService.getGame().then((result) => {
         // takes seed game at array index 0
         this.playerOne = result[0].game[4];
@@ -115,12 +136,13 @@ export default {
 
         this.playerTurn = this.playerOne.playerName;
         this.gameRunning = true;
+       
       });
     },
   },
   mounted() {
     this.pullGame();
-
+    // console.log(GoodBrain.printSomething());     //! AI
     eventBus.$on("cell-selected", (cell) => {
       this.checkIfHit(cell);
     });
