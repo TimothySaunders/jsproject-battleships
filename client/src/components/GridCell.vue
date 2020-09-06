@@ -21,6 +21,7 @@ export default {
             while( this.gameState === true ){
                 if (this.cell.state === "untouched" && !this.noBorder) {
                     eventBus.$emit('cell-selected', this.cell)
+                    this.hasShip = false;
                 }
                 break
             }
@@ -61,9 +62,12 @@ export default {
         text-align: center;
         cursor: crosshair;
     }
+
     .cell > p {
-        font-size: 2.5em;
-        margin: 0;
+        font-size: 3em;
+        padding: 0;
+        margin: 0 auto;
+        height: 50%;
         user-select: none;
     }
     .hit > p {
@@ -84,7 +88,7 @@ export default {
 
     /* new */
     .ship{
-        margin: 10px auto;
+        margin: 15px auto;  
         width: 50%;
         height: 50%;
         background: rgb(121, 116, 116);
