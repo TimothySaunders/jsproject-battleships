@@ -146,11 +146,6 @@ export default {
 
 
 <style>
-#app {
-  /* display: flex;
-  justify-content: space-around; */
-}
-
 main{
   display: flex;
   height: 500px;

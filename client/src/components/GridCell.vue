@@ -56,8 +56,6 @@ export default {
 
 <style>
     .cell {
-        width: 40px;
-        height: 40px;
         border-bottom: 1px solid black;
         border-left: 1px solid black;
         text-align: center;
@@ -65,7 +63,7 @@ export default {
     }
 
     .cell > p {
-        font-size: 3em;
+        font-size: 2.5em;
         padding: 0;
         margin: 0 auto;
         height: 50%;
