@@ -10,12 +10,9 @@
 <script>
 import GameGrid from "./components/GameGrid.vue";
 import GameService from "./services/GameService.js";
-import GoodBrain from "./services/GoodBrain.js"; //! AI
-
-// const themessage = GoodBrain.printSomething();             //! AI
-// console.log(themessage);                                   //! AI
 
 import { eventBus } from "@/main.js";
+
 
 export default {
   name: "App",
@@ -65,7 +62,7 @@ export default {
       }
       this.registerHitToMemory(cell); //! used for AI
       this.turns += 1;
-      this.switchPlayer();
+      // this.switchPlayer();
     },
     getTarget() {
       // identify who is getting shot
@@ -115,11 +112,11 @@ export default {
       // this.setPotentialTargets(shooter,cell);
       this.addPotentialTargets(shooter, cell);
     },
-    addPotentialTargets(a_shooter, a_cell) {
-      let minX = 0;
+    addPotentialTargets(a_shooter, a_cell) { 
+      let minX = 0;  // probably good to have a method to establis grid bounds
       let minY = 0;
       let maxX = 7;
-      let maxY = 7; // probably good to have a method to establis grid bounds
+      let maxY = 7; 
       let index = 0;
 
       // console.log(a_cell.state);
@@ -153,13 +150,39 @@ export default {
         }
         index += 1;
       }
-      // removes duplicate potential targets
+      // removes duplicate potential-targets
       let currentTargets = new Set(
         a_shooter.brain.potentialTargets.map(JSON.stringify)
       );
-      let uniquetargets = Array.from(currentTargets).map(JSON.parse);
-      console.log(uniquetargets);
+      a_shooter.brain.potentialTargets = Array.from(currentTargets).map(JSON.parse);
+
     },
+    filterOutMissesFromPotentialTargets(){ // //! should remove misses from potential targets
+      let shooter = this.getShooter()       
+      let filtered = [];
+      let misses = []
+      for (let miss of shooter.brain.hitHistory){
+          console.log(miss)
+        if (miss.state === "miss"){
+          misses.push([miss.coords.x , miss.coords.y])
+        }
+      }
+      console.log(misses);
+
+      for (let target of shooter.brain.potentialTargets){
+        for(let miss of misses){
+          if(miss[0]===target[0] && miss[1]===target[1] ){
+            // console.log("ding ding")
+          }
+          else {
+            filtered.push(target);
+          }
+        }
+      }
+
+        shooter.brain.potentialTargets = filtered;
+    },
+
 
     saveGame() {
       const game_to_save = {
@@ -193,9 +216,11 @@ export default {
   },
   mounted() {
     this.pullGame();
-    // console.log(GoodBrain.printSomething());     //! AI
     eventBus.$on("cell-selected", (cell) => {
       this.checkIfHit(cell);
+      this.filterOutMissesFromPotentialTargets();
+      this.switchPlayer();
+      
     });
   },
   computed: {

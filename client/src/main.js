@@ -4,10 +4,7 @@ import App from './App.vue'
 
 Vue.config.productionTip = false
 
-export const eventBus = new Vue();
-
-import GoodBrain from './services/GoodBrain.js'    //! AI
-Vue.use(GoodBrain)                              //! AI
+export const eventBus = new Vue();                    
 
 new Vue({
   render: h => h(App),
