@@ -56,12 +56,11 @@ export default {
     onDrop(event) {
       const coords = this.getShipCells(event)
       eventBus.$emit('place-ship', coords)
-      // const ship = event.dataTransfer.getData("html");
-      // const ship = document.querySelector(#)
-      // event.target.appendChild(ship)
 
-    //addittoparentgrid
-      event.target.parentNode
+      const shipCells = this.getShipCells(event)
+      shipCells.forEach(coord => {
+      event.target.parentNode.querySelector(`#g-${coord}`).style.background = "";
+      })
     },
     enterDrag(event) {
       const shipCells = this.getShipCells(event)

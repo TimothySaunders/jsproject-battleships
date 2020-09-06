@@ -86,7 +86,6 @@ export default {
   },
   methods: {
     startDrag(event, ship) {
-      console.log(event.target)
       eventBus.$emit('change-selected-ship', ship)
       event.dataTransfer.dropEffect = "move";
       event.dataTransfer.effectAllowed = "move";
@@ -96,7 +95,25 @@ export default {
   mounted(){
     eventBus.$on('place-ship', (coords) => {
       const shipIndex = this.unplacedShips.indexOf(this.selectedShip)
-      this.unplacedShips[shipIndex].coords = coords
+      // shipIndex evaluates to -1 and then to correct value
+        // runs the if statement twice so always gets it on the second attempt
+      if (shipIndex >= 0) {
+        this.unplacedShips[shipIndex].coords = coords
+      
+        // grid rows are numbered 1-8 top-to-botom
+        // our coords are numbered 0-7 bottom-to-top
+        const row = 8 - parseInt(coords[0][0])
+        const startCol = parseInt(coords[0][1]) + 1
+        const endCol = startCol + this.unplacedShips[shipIndex].length - 1
+        const newShipImage = document.createElement("img")
+        newShipImage.classList.add("new-ship-image")
+        newShipImage.src = this.selectedShip.imgURL
+        newShipImage.width = this.selectedShip.length * 53
+        newShipImage.draggable = false
+        newShipImage.style.gridRow = `${row} / ${row}`
+        newShipImage.style.gridColumn = `${startCol} / ${endCol}`
+        event.target.parentNode.appendChild(newShipImage)
+      }
     })
   }
 };
