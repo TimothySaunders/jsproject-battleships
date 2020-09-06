@@ -4,8 +4,8 @@
     <button v-on:click="saveGame">Save Game</button>
     <button v-on:click="newGame">New Game (so tim can test set-up board)</button>
     <main>
-      <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
-      <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+      <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip"></game-grid>
+      <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip"></game-grid>
     </main>
 
   </div>
@@ -26,7 +26,8 @@ export default {
       turns: 0,
       gameState: 'setUp',
       victor: "",
-    };
+      selectedShip: {}
+    }
   },
   components: {
     "game-grid": GameGrid
@@ -131,6 +132,10 @@ export default {
     eventBus.$on("cell-selected", cell => {
       this.checkIfHit(cell);
     });
+
+    eventBus.$on("change-selected-ship", (ship) => {
+      this.selectedShip = ship;
+    })
   },
   computed: {
     message: function() {

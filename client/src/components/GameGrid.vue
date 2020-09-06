@@ -1,62 +1,101 @@
 <template>
-    <div>
-        <section v-if="gameState==='setUp' && playerTurn!==player.playerName" class="unplacedShips">
-            <div v-for="(ship, key) in unplacedShips" :key="key" :class="ship.type.slice(0, 4).toLowerCase()">
-                <img :src="ship.imgURL"  :width="(ship.length * 53)" >
-            </div>
-            <div v-for="(ship, key) in unplacedShips" :class="ship.type.slice(0, 1).toLowerCase() +'nam'" :key="key + 5">
-                <p>{{ship.type}} Name:</p>
-                <input  type="text" style="width: 90px;">
-            </div>
-        </section>
-        <section v-if="gameState!=='setUp' ||  playerTurn===player.playerName" class="grid" :id="player.playerName">
-            <grid-cell
-                v-for="(cell, key) in player.grid"
-                :key="key"
-                :cell="cell"
-                :id="'g-' + cell.coords.x + cell.coords.y"
-                :noBorder="noBorder"
-                :ships="player.ships.notSunk"
-                :gameState="gameState"
-            ></grid-cell>
-        </section>
-    </div>
+  <div>
+    <!-- ship selection grid-->
+    <section v-if="gameState==='setUp' && playerTurn!==player.playerName" class="unplacedShips">
+      <h2 class="head"> Position your ships</h2>
+      <div
+        v-for="(ship, key) in unplacedShips"
+        :key="key"
+        class="shipIcon"
+        :class="ship.type.slice(0, 4).toLowerCase()"
+        draggable="true"
+        v-on:dragstart="startDrag($event, ship)"
+      >
+        <img :src="ship.imgURL" :width="(ship.length * 53)" draggable="false"/>
+      </div>
+      <div
+        v-for="(ship, key) in unplacedShips"
+        :class="ship.type.slice(0, 1).toLowerCase() +'nam'"
+        :key="key + 5"
+      >
+        <p>{{ship.type}} Name:</p>
+        <input type="text" style="width: 90px;" />
+      </div>
+    </section>
+    <!-- game grid -->
+    <section
+      v-if="gameState!=='setUp' ||  playerTurn===player.playerName"
+      class="grid"
+      :id="player.playerName"
+    >
+      <grid-cell
+        v-for="(cell, key) in player.grid"
+        :key="key"
+        :cell="cell"
+        :id="'g-' + cell.coords.x + cell.coords.y"
+        :noBorder="noBorder"
+        :ships="player.ships.notSunk"
+        :gameState="gameState"
+        :selectedShip="selectedShip"
+      ></grid-cell>
+    </section>
+  </div>
 </template>
 
 <script>
 import GridCell from "./GridCell.vue";
+import { eventBus } from "@/main.js";
 
 export default {
   name: "game-grid",
-  props: ["player", "playerTurn", "gameState"],
-  data(){
-      return {
-          unplacedShips: [
-              {type:"Frigate", length: 3, imgURL:require('@/assets/ships/frigate.png')},
-              {type:"Destroyer", length: 4, imgURL:require('@/assets/ships/destroyer.png')},
-              {type:"Submarine", length: 3, imgURL:require('@/assets/ships/submarine.png')}
-              ]
-      }
+  props: ["player", "playerTurn", "gameState", "selectedShip"],
+  data() {
+    return {
+      unplacedShips: [
+        {
+          type: "Frigate",
+          length: 3,
+          imgURL: require("@/assets/ships/frigate.png"),
+        },
+        {
+          type: "Destroyer",
+          length: 4,
+          imgURL: require("@/assets/ships/destroyer.png"),
+        },
+        {
+          type: "Submarine",
+          length: 3,
+          imgURL: require("@/assets/ships/submarine.png"),
+        },
+      ]
+    };
   },
   components: { "grid-cell": GridCell },
   computed: {
-      noBorder (){
-        if (this.playerTurn === this.player.playerName) {
+    noBorder() {
+      if (this.playerTurn === this.player.playerName) {
         return "no-highlight";
-        }
-    }
-  }
-}
+      }
+    },
+  },
+  methods: {
+    startDrag(event, ship) {
+      eventBus.$emit('change-selected-ship', ship)
+      event.dataTransfer.dropEffect = "move";
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", this.selectedShip);
+    },
+
+  },
+};
 </script>
 
 <style>
-
 .grid {
   background-image: url("../assets/ocean1.jpg");
   background-size: 100% 100%;
   width: 424px;
   height: 424px;
-  /* height: 100%; */
   border-top: 1px solid black;
   border-right: 1px solid black;
   display: grid;
@@ -72,6 +111,80 @@ export default {
   grid-template-rows: repeat(8, 1fr);
   grid-template-columns: repeat(8, 1fr);
 }
+
+.unplacedShips {
+  background-image: url("../assets/ocean1.jpg");
+  background-size: 100% 100%;
+  width: 424px;
+  height: 424px;
+  display: grid;
+  width: 424px;
+  height: 424px;
+  border: 1px solid black;
+  grid-template-areas:
+    ".... .... head head head head .... ...."
+    ".... .... head head head head .... ...."
+    "gnam gnam gnam gall gall .... .... ...."
+    "fnam fnam fnam frig frig frig .... ...."
+    "snam snam snam subm subm subm .... ...."
+    "dnam dnam dnam dest dest dest .... ...."
+    "cnam cnam cnam carr carr carr carr carr"
+    ".... foot foot foot foot foot .... ....";
+  grid-template-rows: repeat(8, 1fr);
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.unplacedShips > div {
+  text-align: center;
+}
+
+.unplacedShips > div > p {
+  margin: 8px 0 0 2px;
+  font-weight: bold;
+}
+.unplacedShips > div > input {
+  margin: 0;
+}
+
+.shipIcon {
+  cursor: grab;
+}
+
+.head {
+    grid-area: head;
+}
+
+.gall {
+  grid-area: gall;
+}
+.gnam {
+  grid-area: gnam;
+}
+.frig {
+  grid-area: frig;
+}
+.fnam {
+  grid-area: fnam;
+}
+.subm {
+  grid-area: subm;
+}
+.snam {
+  grid-area: snam;
+}
+.dest {
+  grid-area: dest;
+}
+.dnam {
+  grid-area: dnam;
+}
+.carr {
+  grid-area: carr;
+}
+.cnam {
+  grid-area: cnam;
+}
+
 
 #g-00 {
   grid-area: g00;
@@ -264,69 +377,5 @@ export default {
 }
 #g-77 {
   grid-area: g77;
-}
-
-.unplacedShips {
-  background-image: url("../assets/ocean1.jpg");
-  background-size: 100% 100%;
-  width: 424px;
-  height: 424px;
-    display: grid;
-    width: 424px;
-    height: 424px;
-    border: 1px solid black;
-    grid-template-areas:
-        "head head head head head head .... ...."
-        "head head head head head head .... ...."
-        "gnam gnam gnam gall gall .... .... ...."
-        "fnam fnam fnam frig frig frig .... ...."
-        "snam snam snam subm subm subm .... ...."
-        "dnam dnam dnam dest dest dest .... ...."
-        "cnam cnam cnam carr carr carr carr carr"
-        ".... foot foot foot foot foot .... ....";
-    grid-template-rows: repeat(8, 1fr);
-    grid-template-columns: repeat(8, 1fr);
-}
-
-.unplacedShips > div {
-    text-align: center;
-}
-
-.unplacedShips > div > p {
-    margin: 8px 0 0 2px;
-}
-.unplacedShips > div > input {
-    margin: 0;
-}
-
-.gall {
-    grid-area: gall;
-}
-.gnam {
-    grid-area:gnam;
-}
-.frig {
-    grid-area: frig;
-}
-.fnam {
-    grid-area:fnam;
-}
-.subm {
-    grid-area: subm;
-}
-.snam {
-    grid-area:snam;
-}
-.dest {
-    grid-area: dest;
-}
-.dnam {
-    grid-area:dnam;
-}
-.carr {
-    grid-area: carr;
-}
-.cnam {
-    grid-area:cnam;
 }
 </style>
