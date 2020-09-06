@@ -26,19 +26,23 @@
 
     </div>
 
-    <div class="game-turn">
-      <h2>{{ message }}</h2>
-    </div>
-
     <main id="__app_game">
-      <div>
-        <p>Player 1 board</p>
-        <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+
+      <div class="game-turn">
+        <h2>{{ message }}</h2>
       </div>
-      <div>
-        <p>Player 2 board</p>
-        <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+
+      <div class="flex">
+        <div>
+          <p>Player 1 board</p>
+          <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+        </div>
+        <div>
+          <p>Player 2 board</p>
+          <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+        </div>
       </div>
+
     </main>
 
   </div>
@@ -241,10 +245,10 @@ body{
   justify-content: space-around; */
 }
 
-main{
-  display: flex;
+.flex{
   height: 500px;
   width: 100%;
+  display: flex;
   justify-content: space-evenly;
 }
 
