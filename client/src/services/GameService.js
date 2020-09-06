@@ -5,10 +5,6 @@ export default {
             return fetch(baseURL)
             .then(res => res.json());
         },
-        getAGameById(id){
-            return fetch(baseURL+id)
-            .then(res => res.json())
-        },
         addGame(payload){
             return fetch(baseURL, {
                 method: "POST",
@@ -23,6 +19,10 @@ export default {
                 headers: { "Content-Type": "application/json"},
                 body: JSON.stringify(payload)
             })
+            .then(res => res.json());
+        },
+        getById(id){
+            return fetch(baseURL + id)
             .then(res => res.json());
         }
 }

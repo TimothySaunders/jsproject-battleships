@@ -71,7 +71,7 @@ const createRouter = function(collection) {
         .catch((error) => {
             console.error(error);
             res.status(500);
-            res.json({status: 500, msg: "Server Error - PUT:id", error: error});
+            res.json({status: 500, msg: "Server Error - GET:id", error: error});
         });
     });
 

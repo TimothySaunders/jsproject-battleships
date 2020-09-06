@@ -2,7 +2,7 @@
   <div id="app">
 
     <header id="__app_header">
-      <h3>{{ message }}</h3>
+      <h1>BATTLESHIPS!!</h1>
       <button v-on:click="menuToggle">Menu</button>
 
       <div id="__app_menu" class="menu hidden">
@@ -26,13 +26,17 @@
 
     </div>
 
+    <div class="game-turn">
+      <h2>{{ message }}</h2>
+    </div>
+
     <main id="__app_game">
       <div>
-        <h2>Player 1 board</h2>
+        <p>Player 1 board</p>
         <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
       </div>
       <div>
-        <h2>Player 2 board</h2>
+        <p>Player 2 board</p>
         <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
       </div>
     </main>
@@ -139,21 +143,41 @@ export default {
       const save_form = document.querySelector("#__app_save_game");
 
       if (this.gameName !== ""){
-        const game_to_save = {
-          // creates a game object to hold current game state and populates game_to_save with current state
-          game: [
-            { name: this.gameName },
-            { playerTurn: this.playerTurn },
-            { turns: this.turns },
-            { gamingRunning: this.gamingRunning },
-            { victor: this.victor },
-            this.playerOne,
-            this.playerTwo
-          ]
-        };
 
-        // Add to DB
-        GameService.addGame(game_to_save);
+        if (GameService.getById(this.gameID)){
+          const game_to_save = {
+            // creates a game object to hold current game state and populates game_to_save with current state
+            game: [
+              { name: this.gameName },
+              { playerTurn: this.playerTurn },
+              { turns: this.turns },
+              { gamingRunning: this.gamingRunning },
+              { victor: this.victor },
+              this.playerOne,
+              this.playerTwo
+            ]
+          };
+
+          // Update DB
+          GameService.updateGame(this.gameID, game_to_save);
+
+        } else {
+          const game_to_save = {
+            // creates a game object to hold current game state and populates game_to_save with current state
+            game: [
+              { name: this.gameName },
+              { playerTurn: this.playerTurn },
+              { turns: this.turns },
+              { gamingRunning: this.gamingRunning },
+              { victor: this.victor },
+              this.playerOne,
+              this.playerTwo
+            ]
+          };
+
+          // Add to DB
+          GameService.addGame(this.gameID, game_to_save);
+        }
 
         // Hide/Show elements
         game_area.classList.remove("hidden");
@@ -230,6 +254,10 @@ header{
   background: rgb(233, 233, 233);
 }
 
+.game-turn{
+  margin: 20px;
+  text-align: center;
+}
 .menu{
   margin: 20px 0 0 0;
   padding: 10px;
