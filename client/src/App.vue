@@ -2,13 +2,8 @@
   <div id="app">
     <h3>{{ message }}</h3>
     <button v-on:click="saveGame">Save Game</button>
-<<<<<<< HEAD
-      <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameRunning"></game-grid>
-      <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameRunning"></game-grid>
-=======
     <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
     <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
->>>>>>> Change/gameRunning_var
   </div>
 </template>
 
@@ -26,11 +21,7 @@ export default {
       // playerTurn: null,
       playerTurn: "Player 1",
       turns: 0,
-<<<<<<< HEAD
       gameRunning: 'setUp',
-=======
-      gameState: "",
->>>>>>> Change/gameRunning_var
       victor: "",
     };
   },
