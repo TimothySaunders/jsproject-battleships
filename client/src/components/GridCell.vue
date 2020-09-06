@@ -54,10 +54,14 @@ export default {
       });
     },
     onDrop(event) {
-      const coords = this.getShipCells(event)
-      eventBus.$emit('place-ship', coords)
-
       const shipCells = this.getShipCells(event)
+
+      //checks if ship hanging off grid before creating event
+      if (shipCells.length === this.selectedShip.length) {
+        eventBus.$emit('place-ship', shipCells)
+      }
+      
+      //resets purple highlighted cells
       shipCells.forEach(coord => {
       event.target.parentNode.querySelector(`#g-${coord}`).style.background = "";
       })

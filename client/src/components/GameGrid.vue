@@ -125,7 +125,6 @@ export default {
 
         //make source ship opaque and undraggable to avoid duplicate drags
         const sourceShip = document.querySelector(`#${this.selectedShip.type}`)
-        console.log(sourceShip)
         sourceShip.draggable = false
         sourceShip.querySelector("img").style.opacity="0.35"
       }
