@@ -7,14 +7,18 @@
 
       <div id="__app_menu" class="menu hidden">
         <button>New Game</button>
-        <button>Load Game</button>
+        <button v-on:click="loadMenu">Load Game</button>
         <button v-if="gameState === 'inGame'" v-on:click="saveMenu">Save Game</button>
       </div>
     </header>
 
     <div id="__app_new_game" class="menu-secondary hidden"></div>
 
-    <div id="__app_load_game" class="menu-secondary hidden"></div>
+    <div id="__app_load_game" class="menu-secondary hidden">
+      <ul>
+        <game-item v-for="(game, index) in allGames" :key="index" :game="game"></game-item>
+      </ul>
+    </div>
 
     <div id="__app_save_game" class="menu-secondary hidden">
 
@@ -49,10 +53,13 @@
 </template>
 
 <script>
+// Imports
 import GameGrid from "./components/GameGrid.vue";
+import GameItem from "./components/GameItem.vue";
 import GameService from "./services/GameService.js";
 import { eventBus } from "@/main.js";
 
+// APP Component
 export default {
   name: "App",
   data() {
@@ -66,11 +73,13 @@ export default {
       victor: "",
       gameName: "",
       gameID: "",
+      allGames: null,
       menuState: false
     };
   },
   components: {
-    "game-grid": GameGrid
+    "game-grid": GameGrid,
+    "game-item": GameItem
   },
   methods: {
     checkIfHit(cell) {
@@ -188,21 +197,55 @@ export default {
         save_form.classList.add("hidden");
       }
     },
-    pullGame() {
-      GameService.getGame().then(result => {
-        // takes seed game at array index 0
-        this.gameID = result[0]._id;
-        this.playerOne = result[0].game[5];
-        this.playerTwo = result[0].game[6];
-        this.playerTurn = result[0].game[1].playerTurn;
-        this.turns = result[0].game[2].turns;
-        this.gameState = result[0].game[3].gameState;
-        this.victor = result[0].game[4].victor;
-        this.gameName = result[0].game[0].name;
+    loadMenu(){
+      // Grab the required areas
+      const load_menu = document.querySelector("#__app_load_game");
+      const game_area = document.querySelector("#__app_game");
 
-        this.playerTurn = this.playerOne.playerName;
-        this.gameState = 'inGame';
-      });
+      // Hide/Show as appropriate
+      game_area.classList.add("hidden");
+      load_menu.classList.remove("hidden");
+    },
+    pullGame(game = null) {
+      // Grab the required areas
+      const load_menu = document.querySelector("#__app_load_game");
+      const game_area = document.querySelector("#__app_game");
+
+      // Run  check
+      if (game !== null){
+        GameService.getById(game._id)
+        .then(result => {
+            this.gameID = result._id;
+            this.playerOne = result.game[5];
+            this.playerTwo = result.game[6];
+            this.playerTurn = result.game[1].playerTurn;
+            this.turns = result.game[2].turns;
+            this.gameState = result.game[3].gameState;
+            this.victor = result.game[4].victor;
+            this.gameName = result.game[0].name;
+
+            this.playerTurn = this.playerOne.playerName;
+            this.gameState = 'inGame';
+
+            // Hide/Show as appropriate
+            game_area.classList.remove("hidden");
+            load_menu.classList.add("hidden");
+        });
+      }
+      // GameService.getGame().then(result => {
+      //   // takes seed game at array index 0
+      //   this.gameID = result[0]._id;
+      //   this.playerOne = result[0].game[5];
+      //   this.playerTwo = result[0].game[6];
+      //   this.playerTurn = result[0].game[1].playerTurn;
+      //   this.turns = result[0].game[2].turns;
+      //   this.gameState = result[0].game[3].gameState;
+      //   this.victor = result[0].game[4].victor;
+      //   this.gameName = result[0].game[0].name;
+
+      //   this.playerTurn = this.playerOne.playerName;
+      //   this.gameState = 'inGame';
+      // });
     },
     menuToggle: function(){
       const menu = document.querySelector('#__app_menu');
@@ -213,13 +256,22 @@ export default {
         menu.classList.add("hidden");
         this.menuState = false;
       }
+    },
+    dbGames: function(){
+      GameService.getGame()
+      .then(result => this.allGames = result)
     }
   },
   mounted() {
-    this.pullGame();
+    // this.pullGame();
+    this.dbGames();
 
     eventBus.$on("cell-selected", cell => {
       this.checkIfHit(cell);
+    });
+
+    eventBus.$on("save-game-selected", game => {
+      this.pullGame(game);
     });
   },
   computed: {
@@ -240,10 +292,6 @@ body{
   margin: 0;
   padding: 0;
 }
-#app {
-  /* display: flex;
-  justify-content: space-around; */
-}
 
 .flex{
   height: 500px;
@@ -256,6 +304,11 @@ header{
   padding: 10px;
   text-align: center;
   background: rgb(233, 233, 233);
+}
+ul{
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
 }
 
 .game-turn{
