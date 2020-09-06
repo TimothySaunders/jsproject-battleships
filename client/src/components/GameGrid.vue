@@ -240,8 +240,8 @@ export default {
 .grid {
   background-image: url("../assets/ocean1.jpg");
   background-size: 100% 100%;
-  width: 100%;
-  height: 40vh;
+  width: 40%;
+  height: 100%;
   border-top: 1px solid black;
   border-right: 1px solid black;
   display: grid;
