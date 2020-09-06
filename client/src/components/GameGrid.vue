@@ -53,7 +53,7 @@ export default {
     return {
       unplacedShips: [
         {
-          name: "bob",
+          name: "",
           type: "Frigate",
           length: 3,
           imgURL: require("@/assets/ships/frigate.png"),
@@ -91,9 +91,14 @@ export default {
       event.dataTransfer.dropEffect = "move";
       event.dataTransfer.effectAllowed = "move";
       event.dataTransfer.setData("html", event.target);
-    },
-
+    }
   },
+  mounted(){
+    eventBus.$on('place-ship', (coords) => {
+      const shipIndex = this.unplacedShips.indexOf(this.selectedShip)
+      this.unplacedShips[shipIndex].coords = coords
+    })
+  }
 };
 </script>
 

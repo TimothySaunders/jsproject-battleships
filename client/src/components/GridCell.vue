@@ -54,6 +54,8 @@ export default {
       });
     },
     onDrop(event) {
+      const coords = this.getShipCells(event)
+      eventBus.$emit('place-ship', coords)
       // const ship = event.dataTransfer.getData("html");
       // const ship = document.querySelector(#)
       // event.target.appendChild(ship)
