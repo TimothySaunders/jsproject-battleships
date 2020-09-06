@@ -1,11 +1,11 @@
 <template>
     <div>
-        <section v-if="gameState==='setUp'" class="unplacedShips">
+        <section v-if="gameState==='setUp' && playerTurn!==player.playerName" class="unplacedShips">
             <div v-for="(ship, key) in unplacedShips" :key="key">
-                <img :src="ship.imgURL" :class="ship.type.slice(0, 3)">
+                <img :src="ship.imgURL" :class="ship.type.slice(0, 3)" :width="(ship.length * 40)" >
             </div>
         </section>
-        <section v-if="gameState!=='setUp'" class="grid" :id="player.playerName">
+        <section v-if="gameState!=='setUp' ||  playerTurn===player.playerName" class="grid" :id="player.playerName">
             <grid-cell
                 v-for="(cell, key) in player.grid"
                 :key="key"
@@ -28,9 +28,9 @@ export default {
   data(){
       return {
           unplacedShips: [
-              {type:"frigate", imgURL:require('@/assets/ships/destroyer.png')},
-              {type:"destroyer", imgURL:require('@/assets/ships/destroyer.png')},
-              {type:"submarine", imgURL:require('@/assets/ships/submarine.png')}]
+              {type:"frigate", length: 3, imgURL:require('@/assets/ships/destroyer.png')},
+              {type:"destroyer", length: 4, imgURL:require('@/assets/ships/destroyer.png')},
+              {type:"submarine", length: 3, imgURL:require('@/assets/ships/submarine.png')}]
       }
   },
   components: { "grid-cell": GridCell },
@@ -265,7 +265,7 @@ export default {
     grid-area: fri;
 }
 .sub {
-    grid-area: sub;
+    grid-area: suu;
 }
 .des {
     grid-area: des;
@@ -277,10 +277,11 @@ export default {
 .unplacedShips {
 display: grid;
 width: 25%;
+border: 1px solid black;
   grid-template-areas:
     "gal gal ... ... ..."
     "fri fri fri ... ..."
-    "sub sub sub ... ..."
+    "suu suu suu ... ..."
     "des des des des ..."
     "car car car car car";
   grid-template-rows: repeat(5, 1fr);

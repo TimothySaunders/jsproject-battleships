@@ -2,6 +2,7 @@
   <div id="app">
     <h3>{{ message }}</h3>
     <button v-on:click="saveGame">Save Game</button>
+    <button v-on:click="newGame">New Game (so tim can test set-up board)</button>
     <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
     <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
   </div>
@@ -18,10 +19,9 @@ export default {
     return {
       playerOne: {},
       playerTwo: {},
-      // playerTurn: null,
       playerTurn: "Player 1",
       turns: 0,
-      gameRunning: 'setUp',
+      gameState: 'setUp',
       victor: "",
     };
   },
@@ -29,6 +29,10 @@ export default {
     "game-grid": GameGrid,
   },
   methods: {
+    newGame() {
+      this.gameState="setUp"
+    },
+
     checkIfHit(cell) {
       let target = this.getTarget();
       const key = 8 * cell.coords.x + cell.coords.y; 
