@@ -59,6 +59,22 @@ const createRouter = function(collection) {
 
     });
 
+    // GET - single
+    router.get("/:id", (req, res) => {
+        
+        // Grab URL params && request body
+        const id = ObjectID(req.params.id);
+
+        // Run request
+        collection.findOne({_id: id})
+        .then(doc => res.json(doc))
+        .catch((error) => {
+            console.error(error);
+            res.status(500);
+            res.json({status: 500, msg: "Server Error - PUT:id", error: error});
+        });
+    });
+
     // Return router
     return router;
 

@@ -7,6 +7,7 @@ db.battleship_save.insertMany(
         {
             game: [
 
+                { name: "default_save" },
                 { playerTurn: "Player 1" },         // 0
                 { turns: 0 },                  // 1
                 { gamingRunning: true },

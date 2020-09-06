@@ -1,18 +1,32 @@
 <template>
   <div id="app">
 
-    <header>
+    <header id="__app_header">
       <h3>{{ message }}</h3>
       <button v-on:click="menuToggle">Menu</button>
 
       <div id="__app_menu" class="menu hidden">
         <button>New Game</button>
         <button>Load Game</button>
-        <button v-if="gameState === 'inGame'">Save Game</button>
+        <button v-if="gameState === 'inGame'" v-on:click="saveMenu">Save Game</button>
       </div>
     </header>
 
-    <main>
+    <div id="__app_new_game" class="menu-secondary hidden"></div>
+
+    <div id="__app_load_game" class="menu-secondary hidden"></div>
+
+    <div id="__app_save_game" class="menu-secondary hidden">
+
+      <form v-on:submit.prevent="saveGame">
+        <label for="game_name">Game Name:</label>
+        <input type="text" id="game_name" v-model="gameName" placeholder="Game Name" required /><br />
+        <input type="submit" value="Save Game" />
+      </form>
+
+    </div>
+
+    <main id="__app_game">
       <div>
         <h2>Player 1 board</h2>
         <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
@@ -42,6 +56,8 @@ export default {
       turns: 0,
       gameState: "",
       victor: "",
+      gameName: "",
+      gameID: "",
       menuState: false
     };
   },
@@ -108,30 +124,53 @@ export default {
     checkIfAllSunk(player) {
       return player.ships.notSunk.length === player.ships.sunk.length;
     },
-    saveGame() {
-      const game_to_save = {
-        // creates a game object to hold current game state and populates game_to_save with current state
-        game: [
-          { playerTurn: this.playerTurn },
-          { turns: this.turns },
-          { gamingRunning: this.gamingRunning },
-          { victor: this.victor },
-          this.playerOne,
-          this.playerTwo
-        ]
-      };
+    saveMenu(){
+      // Grab the elements needed 
+      const game_area = document.querySelector("#__app_game");
+      const save_form = document.querySelector("#__app_save_game");
 
-      GameService.addGame(game_to_save);
+      // Hide/Show elements
+      game_area.classList.add("hidden");
+      save_form.classList.remove("hidden");
+    },
+    saveGame() {
+      // Grab the elements needed 
+      const game_area = document.querySelector("#__app_game");
+      const save_form = document.querySelector("#__app_save_game");
+
+      if (this.gameName !== ""){
+        const game_to_save = {
+          // creates a game object to hold current game state and populates game_to_save with current state
+          game: [
+            { name: this.gameName },
+            { playerTurn: this.playerTurn },
+            { turns: this.turns },
+            { gamingRunning: this.gamingRunning },
+            { victor: this.victor },
+            this.playerOne,
+            this.playerTwo
+          ]
+        };
+
+        // Add to DB
+        GameService.addGame(game_to_save);
+
+        // Hide/Show elements
+        game_area.classList.remove("hidden");
+        save_form.classList.add("hidden");
+      }
     },
     pullGame() {
       GameService.getGame().then(result => {
         // takes seed game at array index 0
-        this.playerOne = result[0].game[4];
-        this.playerTwo = result[0].game[5];
-        this.playerTurn = result[0].game[0].playerTurn;
-        this.turns = result[0].game[1].turns;
-        this.gameState = result[0].game[2].gameState;
-        this.victor = result[0].game[3].victor;
+        this.gameID = result[0]._id;
+        this.playerOne = result[0].game[5];
+        this.playerTwo = result[0].game[6];
+        this.playerTurn = result[0].game[1].playerTurn;
+        this.turns = result[0].game[2].turns;
+        this.gameState = result[0].game[3].gameState;
+        this.victor = result[0].game[4].victor;
+        this.gameName = result[0].game[0].name;
 
         this.playerTurn = this.playerOne.playerName;
         this.gameState = 'inGame';
@@ -196,7 +235,23 @@ header{
   padding: 10px;
   background: rgb(219, 219, 219);
 }
-button{
+.menu-secondary{
+  padding: 10px;
+  height: calc(100vh - 234px);
+  background: rgb(216, 216, 216);
+  text-align: center;
+}
+
+label{
+  width: 40%;
+}
+input{
+  margin: 10px;
+  padding: 10px 5px;
+  width: 60%;
+}
+
+button, input[type=submit]{
   margin: 0 10px;
   padding: 10px;
   width: 30%;
