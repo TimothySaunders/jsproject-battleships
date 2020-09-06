@@ -2,7 +2,7 @@
   <div>
     <!-- ship selection grid-->
     <section v-if="gameState==='setUp' && playerTurn!==player.playerName" class="unplacedShips">
-      <h2 class="head"> Position your ships</h2>
+      <h2 class="head"> Position Your Fleet!</h2>
       <div
         v-for="(ship, key) in unplacedShips"
         :key="key"
@@ -10,6 +10,7 @@
         :class="ship.type.slice(0, 4).toLowerCase()"
         draggable="true"
         v-on:dragstart="startDrag($event, ship)"
+        :id="ship.type"
       >
         <img :src="ship.imgURL" :width="(ship.length * 53)" draggable="false"/>
       </div>
@@ -20,6 +21,9 @@
       >
         <p>{{ship.type}} Name:</p>
         <input type="text" style="width: 90px;" v-model="unplacedShips[index].name"/>
+      </div>
+      <div class="sail">
+        <button v-on:click="submitFleet()" >Set Sail!</button>
       </div>
     </section>
     <!-- game grid -->
@@ -86,10 +90,15 @@ export default {
   },
   methods: {
     startDrag(event, ship) {
-      eventBus.$emit('change-selected-ship', ship)
+      eventBus.$emit('change-selected-ship', ship);
       event.dataTransfer.dropEffect = "move";
       event.dataTransfer.effectAllowed = "move";
       event.dataTransfer.setData("html", event.target);
+    },
+    submitFleet(){
+      if (this.unplacedShips.every(ship => ship.coords.length >0)) {
+        //probably an eventbus
+      }
     }
   },
   mounted(){
@@ -113,6 +122,12 @@ export default {
         newShipImage.style.gridRow = `${row} / ${row}`
         newShipImage.style.gridColumn = `${startCol} / ${endCol}`
         event.target.parentNode.appendChild(newShipImage)
+
+        //make source ship opaque and undraggable to avoid duplicate drags
+        const sourceShip = document.querySelector(`#${this.selectedShip.type}`)
+        console.log(sourceShip)
+        sourceShip.draggable = false
+        sourceShip.querySelector("img").style.opacity="0.35"
       }
     })
   }
@@ -158,7 +173,7 @@ export default {
     "snam snam snam subm subm subm .... ...."
     "dnam dnam dnam dest dest dest .... ...."
     "cnam cnam cnam carr carr carr carr carr"
-    ".... foot foot foot foot foot .... ....";
+    ".... .... .... sail sail .... .... ....";
   grid-template-rows: repeat(8, 1fr);
   grid-template-columns: repeat(8, 1fr);
 }
@@ -212,6 +227,10 @@ export default {
 }
 .cnam {
   grid-area: cnam;
+}
+.sail {
+  grid-area: sail;
+  margin-top: 16px;
 }
 
 
