@@ -63,7 +63,8 @@ export default {
         target.grid[key].state = "miss";
       }
       this.turns += 1;
-      this.switchPlayer();
+      // Switches the player after 1 second. Time can be adjusted if need be
+      setTimeout(() => this.switchPlayer(), 1000);
     },
     getTarget() {
       // identify who is getting shot
