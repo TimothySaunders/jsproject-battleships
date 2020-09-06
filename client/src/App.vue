@@ -6,13 +6,20 @@
       <button v-on:click="menuToggle">Menu</button>
 
       <div id="__app_menu" class="menu hidden">
-        <button>New Game</button>
-        <button v-on:click="loadMenu">Load Game</button>
+        <button v-on:click="newMenu">New Game</button>
+        <button v-if="allGames.length > 0" v-on:click="loadMenu">Load Game</button>
         <button v-if="gameState === 'inGame'" v-on:click="saveMenu">Save Game</button>
       </div>
     </header>
 
-    <div id="__app_new_game" class="menu-secondary hidden"></div>
+    <div id="__app_new_game" class="menu-secondary hidden">
+      <form v-on:submit.prevent="newGameGenerator">
+        <label for="game_name">Game Name:</label>
+        <input type="text" id="game_name" v-model="gameName" placeholder="Game Name" required /><br />
+        <input type="submit" value="Create Game" />
+      </form>
+      <!-- Add to this when we create different size boards && personal placement -->
+    </div>
 
     <div id="__app_load_game" class="menu-secondary hidden">
       <ul>
@@ -49,8 +56,8 @@
 
     </main>
 
-    <main v-else id="__app_game">
-      <h2>Please load a game</h2>
+    <main v-else class="center" id="__app_game">
+      <h2>Please start a new game or load a game to continue</h2>
     </main>
 
   </div>
@@ -62,6 +69,7 @@ import GameGrid from "./components/GameGrid.vue";
 import GameItem from "./components/GameItem.vue";
 import GameService from "./services/GameService.js";
 import { eventBus } from "@/main.js";
+import { defaultGrids } from "./services/DefaultGrids.js";
 
 // APP Component
 export default {
@@ -144,6 +152,46 @@ export default {
 
     checkIfAllSunk(player) {
       return player.ships.notSunk.length === player.ships.sunk.length;
+    },
+    newMenu(){
+      // Grab the elements needed 
+      const game_area = document.querySelector("#__app_game");
+      const new_game = document.querySelector("#__app_new_game");
+
+      // Hide/Show elements
+      game_area.classList.add("hidden");
+      new_game.classList.remove("hidden");
+    },
+    newGameGenerator(){
+      // Create game state
+      const new_game = {
+        game: [
+          {name: this.gameName},
+          {playerTurn: "Player 1"},
+          {turns: 0},
+          {gameState: ""},
+          {victor: ""},
+          {
+            playerName: "Player 1",
+            ships: {
+              notSunk: [[[1,1]]], //this.generateRandomShips()
+              sunk: []
+            },
+            grid: defaultGrids
+          },
+          {
+            playerName: "Player 2",
+            ships: {
+              notSunk: [[[1,1]]], //this.generateRandomShips()
+              sunk: []
+            },
+            grid: defaultGrids
+          }
+        ]
+      };
+
+      // Add game to db
+      GameService.addGame(new_game);
     },
     saveMenu(){
       // Grab the elements needed 
@@ -302,6 +350,9 @@ body{
   width: 100%;
   display: flex;
   justify-content: space-evenly;
+}
+.center{
+  text-align: center;
 }
 
 header{

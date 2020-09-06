@@ -42,7 +42,6 @@ export default {
                     // Check both coords
                     if (current_coord === cell_coords){
                         this.hasShip = true;
-                        console.log(cell_coords + "hasShip:", true);
                     }
                 });
 

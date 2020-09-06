@@ -15,7 +15,6 @@ export default {
     methods: {
         gameSelected: function() {
             eventBus.$emit("save-game-selected", this.game);
-            console.log("event emited");
         }
     }
 }
