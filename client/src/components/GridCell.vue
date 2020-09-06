@@ -54,8 +54,12 @@ export default {
       });
     },
     onDrop(event) {
-    //   const ship = event.dataTransfer.getData("text/plain");
-    //   console.log(this.selectedShip.length)
+      // const ship = event.dataTransfer.getData("html");
+      // const ship = document.querySelector(#)
+      // event.target.appendChild(ship)
+
+    //addittoparentgrid
+      event.target.parentNode
     },
     enterDrag(event) {
       const shipCells = this.getShipCells(event)

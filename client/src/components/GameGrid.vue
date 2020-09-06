@@ -14,12 +14,12 @@
         <img :src="ship.imgURL" :width="(ship.length * 53)" draggable="false"/>
       </div>
       <div
-        v-for="(ship, key) in unplacedShips"
+        v-for="(ship, index) in unplacedShips"
         :class="ship.type.slice(0, 1).toLowerCase() +'nam'"
-        :key="key + 5"
+        :key="index + 5"
       >
         <p>{{ship.type}} Name:</p>
-        <input type="text" style="width: 90px;" />
+        <input type="text" style="width: 90px;" v-model="unplacedShips[index].name"/>
       </div>
     </section>
     <!-- game grid -->
@@ -53,19 +53,25 @@ export default {
     return {
       unplacedShips: [
         {
+          name: "bob",
           type: "Frigate",
           length: 3,
           imgURL: require("@/assets/ships/frigate.png"),
+          coords: []
         },
         {
+          name: "",
           type: "Destroyer",
           length: 4,
           imgURL: require("@/assets/ships/destroyer.png"),
+          coords: []
         },
         {
+          name: "",
           type: "Submarine",
           length: 3,
           imgURL: require("@/assets/ships/submarine.png"),
+          coords: []
         },
       ]
     };
@@ -80,10 +86,11 @@ export default {
   },
   methods: {
     startDrag(event, ship) {
+      console.log(event.target)
       eventBus.$emit('change-selected-ship', ship)
       event.dataTransfer.dropEffect = "move";
       event.dataTransfer.effectAllowed = "move";
-      event.dataTransfer.setData("text/plain", this.selectedShip);
+      event.dataTransfer.setData("html", event.target);
     },
 
   },
