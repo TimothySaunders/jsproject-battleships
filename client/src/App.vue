@@ -1,11 +1,26 @@
 <template>
   <div id="app">
-    <h3>{{ message }}</h3>
-    <button v-on:click="saveGame">Save Game</button>
+
+    <header>
+      <h3>{{ message }}</h3>
+      <button v-on:click="menuToggle">Menu</button>
+
+      <div id="__app_menu" class="menu hidden">
+        <button>New Game</button>
+        <button>Load Game</button>
+        <button v-if="gameState === 'inGame'">Save Game</button>
+      </div>
+    </header>
 
     <main>
-      <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
-      <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+      <div>
+        <h2>Player 1 board</h2>
+        <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+      </div>
+      <div>
+        <h2>Player 2 board</h2>
+        <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+      </div>
     </main>
 
   </div>
@@ -27,6 +42,7 @@ export default {
       turns: 0,
       gameState: "",
       victor: "",
+      menuState: false
     };
   },
   components: {
@@ -120,6 +136,16 @@ export default {
         this.playerTurn = this.playerOne.playerName;
         this.gameState = 'inGame';
       });
+    },
+    menuToggle: function(){
+      const menu = document.querySelector('#__app_menu');
+      if (this.menuState === false){
+        menu.classList.remove("hidden");
+        this.menuState = true;
+      } else {
+        menu.classList.add("hidden");
+        this.menuState = false;
+      }
     }
   },
   mounted() {
@@ -143,6 +169,10 @@ export default {
 
 
 <style>
+body{
+  margin: 0;
+  padding: 0;
+}
 #app {
   /* display: flex;
   justify-content: space-around; */
@@ -153,5 +183,26 @@ main{
   height: 500px;
   width: 100%;
   justify-content: space-evenly;
+}
+
+header{
+  padding: 10px;
+  text-align: center;
+  background: rgb(233, 233, 233);
+}
+
+.menu{
+  margin: 20px 0 0 0;
+  padding: 10px;
+  background: rgb(219, 219, 219);
+}
+button{
+  margin: 0 10px;
+  padding: 10px;
+  width: 30%;
+}
+
+.hidden{
+  display: none;
 }
 </style>
