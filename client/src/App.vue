@@ -30,7 +30,7 @@
 
     </div>
 
-    <main id="__app_game">
+    <main v-if="gameState !== ''" id="__app_game">
 
       <div class="game-turn">
         <h2>{{ message }}</h2>
@@ -47,6 +47,10 @@
         </div>
       </div>
 
+    </main>
+
+    <main v-else id="__app_game">
+      <h2>Please load a game</h2>
     </main>
 
   </div>
