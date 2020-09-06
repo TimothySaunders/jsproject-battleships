@@ -2,8 +2,12 @@
   <div id="app">
     <h3>{{ message }}</h3>
     <button v-on:click="saveGame">Save Game</button>
-    <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
-    <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+
+    <main>
+      <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+      <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+    </main>
+
   </div>
 </template>
 
@@ -26,20 +30,20 @@ export default {
     };
   },
   components: {
-    "game-grid": GameGrid,
+    "game-grid": GameGrid
   },
   methods: {
     checkIfHit(cell) {
       let target = this.getTarget();
-      const key = 8 * cell.coords.x + cell.coords.y; 
+      const key = 8 * cell.coords.x + cell.coords.y;
       let isHit;
       let shipToSinkIndex;
       let shipToSink;
 
-      target.ships.notSunk.forEach((ship) => {
+      target.ships.notSunk.forEach(ship => {
         let index = 0;
 
-        ship.forEach((ship_coords) => {
+        ship.forEach(ship_coords => {
           if (
             ship_coords[0] === cell.coords.x &&
             ship_coords[1] === cell.coords.y
@@ -97,14 +101,14 @@ export default {
           { gamingRunning: this.gamingRunning },
           { victor: this.victor },
           this.playerOne,
-          this.playerTwo,
-        ],
+          this.playerTwo
+        ]
       };
 
       GameService.addGame(game_to_save);
     },
     pullGame() {
-      GameService.getGame().then((result) => {
+      GameService.getGame().then(result => {
         // takes seed game at array index 0
         this.playerOne = result[0].game[4];
         this.playerTwo = result[0].game[5];
@@ -116,31 +120,38 @@ export default {
         this.playerTurn = this.playerOne.playerName;
         this.gameState = 'inGame';
       });
-    },
+    }
   },
   mounted() {
     this.pullGame();
 
-    eventBus.$on("cell-selected", (cell) => {
+    eventBus.$on("cell-selected", cell => {
       this.checkIfHit(cell);
     });
   },
   computed: {
-    message: function () {
+    message: function() {
       // Provides feedback to the user describing current game state
       return this.gameState==='inGame'
         ? `${this.playerTurn}'s turn to Fire!`
         : `${this.victor} Wins!`;
-    },
+    }
   },
-  watch: {},
+  watch: {}
 };
 </script>
 
 
 <style>
 #app {
+  /* display: flex;
+  justify-content: space-around; */
+}
+
+main{
   display: flex;
-  justify-content: space-around;
+  height: 500px;
+  width: 100%;
+  justify-content: space-evenly;
 }
 </style>
