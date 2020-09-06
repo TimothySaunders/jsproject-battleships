@@ -1,7 +1,7 @@
 <template>
   <div v-on:click="handleSelect()" class="cell" :class="[cell.state, noBorder]">
       <p v-if="cell.state !== 'untouched'">&#x25CF;</p>
-      <div v-if="hasShip" class="ship"></div>
+      <div v-if="hasShip && playerTurn === player.playerName" class="ship"></div>
   </div>
 </template>
 
@@ -10,7 +10,7 @@ import { eventBus } from '../main';
 
 export default {
     name: 'grid-cell',
-    props: ['cell', 'noBorder', 'ships', "gameState"],
+    props: ['cell', 'noBorder', 'ships', "gameState", "playerTurn", "player"],
     data(){
         return {
             hasShip: false

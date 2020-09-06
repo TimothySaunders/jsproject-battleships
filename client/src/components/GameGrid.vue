@@ -8,6 +8,8 @@
       :noBorder="noBorder"
       :ships="player.ships.notSunk"
       :gameState="gameState"
+      :playerTurn="playerTurn"
+      :player="player"
     ></grid-cell>
   </section>
 </template>
