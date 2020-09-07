@@ -46,11 +46,11 @@
       <div class="flex">
         <div>
           <p>Player 1 board</p>
-          <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+          <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip"></game-grid>
         </div>
         <div>
           <p>Player 2 board</p>
-          <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState"></game-grid>
+          <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip"></game-grid>
         </div>
       </div>
 
@@ -78,7 +78,6 @@ export default {
     return {
       playerOne: {},
       playerTwo: {},
-      // playerTurn: null,
       playerTurn: "Player 1",
       turns: 0,
       gameState: "",
@@ -86,8 +85,9 @@ export default {
       gameName: "",
       gameID: "",
       allGames: null,
-      menuState: false
-    };
+      menuState: false,
+      selectedShip: {}
+    }
   },
   components: {
     "game-grid": GameGrid,
@@ -159,8 +159,11 @@ export default {
       const new_game = document.querySelector("#__app_new_game");
 
       // Hide/Show elements
-      game_area.classList.add("hidden");
+      // game_area.classList.add("hidden");
       new_game.classList.remove("hidden");
+
+      // Set game state
+      this.gameState = "setUp";
     },
     newGameGenerator(){
       // Create game state
@@ -324,6 +327,10 @@ export default {
 
     eventBus.$on("save-game-selected", game => {
       this.pullGame(game);
+    });
+    
+    eventBus.$on("change-selected-ship", (ship) => {
+      this.selectedShip = ship;
     });
   },
   computed: {
