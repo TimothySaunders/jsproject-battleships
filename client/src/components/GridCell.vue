@@ -18,7 +18,7 @@ import { eventBus } from "../main";
 
 export default {
   name: "grid-cell",
-  props: ["cell", "noBorder", "ships", "gameState", "selectedShip", "playerTurn", "player"],
+  props: ["cell", "noBorder", "ships", "gameState", "selectedShip", "playerTurn", "player", "shipOrientation"],
   data() {
     return {
       hasShip: false,
@@ -88,8 +88,12 @@ export default {
 
       const shipCells = []
       for (let i=0; i<this.selectedShip.length; i++){
-          if ((currentCellY + i) <= 7) {
+          if ((currentCellY + i) <= 7 && this.shipOrientation === 'h') {
             const nextCell = currentCellX.toString() + (currentCellY + i).toString()
+            shipCells.push(nextCell)
+          }
+          if ((currentCellY - i) >= 0 && this.shipOrientation === 'v') {
+            const nextCell = (currentCellX - i).toString() + currentCellY.toString()
             shipCells.push(nextCell)
           }
       }

@@ -3,6 +3,12 @@
     <!-- ship selection grid-->
     <section v-if="gameState==='setUp' && playerTurn!==player.playerName" class="unplacedShips">
       <h2 class="head"> Position Your Fleet!</h2>
+      <div class="orie">
+        <label for="orientation">Horizontal</label>
+        <input type="radio" value="h" name="orientation" v-on:change="changeOrientation()" checked>
+        <label for="orientation">Vertical</label>
+        <input type="radio" value="v" name="orientation" v-on:change="changeOrientation()">
+      </div>
       <div
         v-for="(ship, key) in unplacedShips"
         :key="key"
@@ -22,9 +28,7 @@
         <p>{{ship.type}} Name:</p>
         <input class="shipName" type="text" style="width: 90px;" v-model="unplacedShips[index].name"/>
       </div>
-      <div class="sail">
-        <button v-on:click="submitFleet()" >Set Sail!</button>
-      </div>
+      <button v-on:click="submitFleet()" class="sail">Set Sail!</button>
     </section>
     <!-- game grid -->
     <section
@@ -43,6 +47,7 @@
         :selectedShip="selectedShip"
         :playerTurn="playerTurn"
         :player="player"
+        :shipOrientation="shipOrientation"
       ></grid-cell>
     </section>
   </div>
@@ -54,7 +59,7 @@ import { eventBus } from "@/main.js";
 
 export default {
   name: "game-grid",
-  props: ["player", "playerTurn", "gameState", "selectedShip"],
+  props: ["player", "playerTurn", "gameState", "selectedShip", "shipOrientation"],
   data() {
     return {
       unplacedShips: [
@@ -105,6 +110,9 @@ export default {
     },
   },
   methods: {
+    changeOrientation(){
+      eventBus.$emit('change-orientation', event.target.value)
+    },
     startDrag(event, ship) {
       eventBus.$emit('change-selected-ship', ship);
     },
@@ -183,8 +191,8 @@ export default {
   height: 424px;
   border: 1px solid black;
   grid-template-areas:
-    ".... .... head head head head .... ...."
-    ".... .... head head head head .... ...."
+    ".... head head head head head head ...."
+    ".... .... orie orie orie orie .... ...."
     "gnam gnam gnam gall gall .... .... ...."
     "fnam fnam fnam frig frig frig .... ...."
     "snam snam snam subm subm subm .... ...."
@@ -213,12 +221,20 @@ export default {
 
 .head {
     grid-area: head;
+    margin: 10px;
+    text-align:center;
+    width: 100%;
 }
 .shipName {
   background-color: lightgrey;
   font-family: 'Special Elite', cursive;
+  padding: 2px;
 }
 
+.orie {
+  grid-area: orie;
+  display: flex;
+}
 .gall {
   grid-area: gall;
 }
@@ -252,6 +268,8 @@ export default {
 .sail {
   grid-area: sail;
   margin-top: 16px;
+  padding: 0;
+  width: 100px;
 }
 
 
