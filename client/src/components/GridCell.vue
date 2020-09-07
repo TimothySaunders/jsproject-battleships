@@ -83,17 +83,17 @@ export default {
       })
     },
     getShipCells(event){
-      const currentCellX = parseInt(event.target.id.slice(2, 3))
-      const currentCellY = parseInt(event.target.id.slice(3, 4))
+      const currentCellRow = parseInt(event.target.id.slice(2, 3))
+      const currentCellCol = parseInt(event.target.id.slice(3, 4))
 
       const shipCells = []
       for (let i=0; i<this.selectedShip.length; i++){
-          if ((currentCellY + i) <= 7 && this.shipOrientation === 'h') {
-            const nextCell = currentCellX.toString() + (currentCellY + i).toString()
+          if ((currentCellCol + i) <= 7 && this.shipOrientation === 'h') {
+            const nextCell = currentCellRow.toString() + (currentCellCol + i).toString()
             shipCells.push(nextCell)
           }
-          if ((currentCellY - i) >= 0 && this.shipOrientation === 'v') {
-            const nextCell = (currentCellX - i).toString() + currentCellY.toString()
+          if ((currentCellRow - i) >= 0 && this.shipOrientation === 'v') {
+            const nextCell = (currentCellRow - i).toString() + currentCellCol.toString()
             shipCells.push(nextCell)
           }
       }

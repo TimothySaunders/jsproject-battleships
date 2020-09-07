@@ -114,7 +114,12 @@ export default {
       eventBus.$emit('change-orientation', event.target.value)
     },
     startDrag(event, ship) {
-      eventBus.$emit('change-selected-ship', ship);
+      if(this.shipOrientation === 'v'){
+        this.unplacedShips.find(unplacedShip => ship===unplacedShip).imgURL=require(`../assets/ships/${ship.type.toLowerCase()}_v.png`)
+      } else {
+        this.unplacedShips.find(unplacedShip => ship===unplacedShip).imgURL=require(`../assets/ships/${ship.type.toLowerCase()}.png`)
+      }
+      eventBus.$emit('change-selected-ship', this.unplacedShips.find(unplacedShip => ship===unplacedShip));
     },
     submitFleet(){
       if (this.unplacedShips.every(ship => ship.coords.length >0)) {
@@ -131,21 +136,23 @@ export default {
         // runs the if statement twice (reason unknown) so always gets it on the second attempt
       if (shipIndex >= 0) {
         this.unplacedShips[shipIndex].coords = coords
-      
+        console.log(coords)
+
         // grid rows are numbered 1-8 top-to-botom
         // our coords are numbered 0-7 bottom-to-top
-        const row = 8 - parseInt(coords[0][0])
+        const startRow = 8 - parseInt(coords[0][0])
+        const endRow = this.shipOrientation === "h" ? 8 - parseInt(coords[0][0]) : 8 - parseInt(coords[0][0]) + this.unplacedShips[shipIndex].length
         const startCol = parseInt(coords[0][1]) + 1
-        const endCol = startCol + this.unplacedShips[shipIndex].length //this is purposefully 1 more than expected- visual error on 2-cell ships otherwise
+        const endCol = this.shipOrientation === "v" ? startCol : startCol + this.unplacedShips[shipIndex].length //this is purposefully 1 more than expected- visual error on 2-cell ships otherwise
 
         // builds new ship image and adds to grid
         const newShipImage = document.createElement("img")
         newShipImage.classList.add("new-ship-image")
         newShipImage.src = this.selectedShip.imgURL
-        newShipImage.width = this.selectedShip.length * 53
-        newShipImage.height = 53
+        newShipImage.width = this.shipOrientation === "h" ? this.selectedShip.length * 53 : 53
+        newShipImage.height = this.shipOrientation === "h" ? 53 : this.selectedShip.length * 53
         newShipImage.draggable = false
-        newShipImage.style.gridRow = `${row} / ${row}`
+        newShipImage.style.gridRow = `${startRow} / ${endRow}`
         newShipImage.style.gridColumn = `${startCol} / ${endCol}`
         event.target.parentNode.appendChild(newShipImage)
 
