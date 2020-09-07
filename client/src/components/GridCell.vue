@@ -73,7 +73,7 @@ export default {
     // Absolutely quality fudge
       setTimeout(() => shipCells.forEach(coord => {
       event.target.parentNode.querySelector(`#g-${coord}`).style.background = "purple";
-      }), 2)
+      }), 1)
     },
     leaveDrag(event) {
       const shipCells = this.getShipCells(event)

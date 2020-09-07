@@ -111,6 +111,7 @@ export default {
     submitFleet(){
       if (this.unplacedShips.every(ship => ship.coords.length >0)) {
         eventBus.$emit('submit-positions', this.unplacedShips)
+        //remove images
       }
     }
   },

@@ -342,19 +342,22 @@ export default {
     eventBus.$on("change-selected-ship", (ship) => {
       this.selectedShip = ship;
     });
+
     eventBus.$on("submit-positions", (shipPositions) => {
-       const player = this.getShooter()
+       let player = this.getShooter()
        player.ships.placedShips = shipPositions
        player.ships.notSunk = player.ships.placedShips.map((ship) => {
          const cellArray = []
-         console.log(ship.coords)
          ship.coords.forEach((coord) => {
             cellArray.push([coord[0], coord[1]])
          })
-         console.log(cellArray)
          return cellArray
-         
        })
+       this.switchPlayer()
+       player = this.getShooter()
+       if (player.ships.notSunk.length !== 0) {
+         this.gameState = "inGame"
+       }
     });
 
 
