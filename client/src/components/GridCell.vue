@@ -9,7 +9,7 @@
     v-on:dragleave="leaveDrag($event)"
   >
     <p v-if="cell.state !== 'untouched'">&#x25CF;</p>
-    <div v-if="hasShip" class="ship"></div>
+    <div v-if="hasShip && playerTurn === player.playerName" class="ship"></div>
   </div>
 </template>
 
@@ -18,7 +18,7 @@ import { eventBus } from "../main";
 
 export default {
   name: "grid-cell",
-  props: ["cell", "noBorder", "ships", "gameState", "selectedShip"],
+  props: ["cell", "noBorder", "ships", "gameState", "selectedShip", "playerTurn", "player"],
   data() {
     return {
       hasShip: false,

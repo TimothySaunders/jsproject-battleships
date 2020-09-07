@@ -42,6 +42,8 @@
         :ships="player.ships.notSunk"
         :gameState="gameState"
         :selectedShip="selectedShip"
+        :playerTurn="playerTurn"
+        :player="player"
       ></grid-cell>
     </section>
   </div>
