@@ -12,7 +12,7 @@
         v-on:dragstart="startDrag($event, ship)"
         :id="ship.type"
       >
-        <img :src="ship.imgURL" :width="(ship.length * 53)" draggable="false"/>
+        <img :src="ship.imgURL" :width="(ship.length * 53)" height="53" draggable="false"/>
       </div>
       <div
         v-for="(ship, index) in unplacedShips"
@@ -58,6 +58,13 @@ export default {
       unplacedShips: [
         {
           name: "",
+          type: "Galleon",
+          length: 2,
+          imgURL: require("@/assets/ships/galleon.png"),
+          coords: []
+        },
+        {
+          name: "",
           type: "Frigate",
           length: 3,
           imgURL: require("@/assets/ships/frigate.png"),
@@ -77,6 +84,13 @@ export default {
           imgURL: require("@/assets/ships/submarine.png"),
           coords: []
         },
+        {
+          name: "",
+          type: "Carrier",
+          length: 5,
+          imgURL: require("@/assets/ships/carrier.png"),
+          coords: []
+        }
       ]
     };
   },
@@ -113,11 +127,14 @@ export default {
         // our coords are numbered 0-7 bottom-to-top
         const row = 8 - parseInt(coords[0][0])
         const startCol = parseInt(coords[0][1]) + 1
-        const endCol = startCol + this.unplacedShips[shipIndex].length - 1
+        const endCol = startCol + this.unplacedShips[shipIndex].length //this is 1 more than expected on purpose - visual error on 2-cell ships otherwise
+
+        // builds new ship image and adds to grid
         const newShipImage = document.createElement("img")
         newShipImage.classList.add("new-ship-image")
         newShipImage.src = this.selectedShip.imgURL
         newShipImage.width = this.selectedShip.length * 53
+        newShipImage.height = 53
         newShipImage.draggable = false
         newShipImage.style.gridRow = `${row} / ${row}`
         newShipImage.style.gridColumn = `${startCol} / ${endCol}`
