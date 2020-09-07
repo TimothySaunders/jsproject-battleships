@@ -106,9 +106,6 @@ export default {
   methods: {
     startDrag(event, ship) {
       eventBus.$emit('change-selected-ship', ship);
-      event.dataTransfer.dropEffect = "move";
-      event.dataTransfer.effectAllowed = "move";
-      event.dataTransfer.setData("html", event.target);
     },
     submitFleet(){
       if (this.unplacedShips.every(ship => ship.coords.length >0)) {
