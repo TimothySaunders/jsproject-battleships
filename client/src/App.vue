@@ -13,7 +13,6 @@ import GameService from "./services/GameService.js";
 
 import { eventBus } from "@/main.js";
 
-
 export default {
   name: "App",
   data() {
@@ -112,11 +111,11 @@ export default {
       // this.setPotentialTargets(shooter,cell);
       this.addPotentialTargets(shooter, cell);
     },
-    addPotentialTargets(a_shooter, a_cell) { 
-      let minX = 0;  // probably good to have a method to establis grid bounds
+    addPotentialTargets(a_shooter, a_cell) {
+      let minX = 0; // probably good to have a method to establis grid bounds
       let minY = 0;
       let maxX = 7;
-      let maxY = 7; 
+      let maxY = 7;
       let index = 0;
 
       // console.log(a_cell.state);
@@ -154,35 +153,74 @@ export default {
       let currentTargets = new Set(
         a_shooter.brain.potentialTargets.map(JSON.stringify)
       );
-      a_shooter.brain.potentialTargets = Array.from(currentTargets).map(JSON.parse);
-
+      a_shooter.brain.potentialTargets = Array.from(currentTargets).map(
+        JSON.parse
+      );
     },
-    filterOutMissesFromPotentialTargets(){ // //! should remove misses from potential targets
-      let shooter = this.getShooter()       
-      let filtered = [];
-      let misses = []
-      for (let miss of shooter.brain.hitHistory){
-          console.log(miss)
-        if (miss.state === "miss"){
-          misses.push([miss.coords.x , miss.coords.y])
+    filterOutMissesFromPotentialTargets() {
+      // //! should remove misses from potential targets
+      let shooter = this.getShooter();
+     
+      let toDiscard = new Array();
+      let filtered = new Array();
+      let misses = [];
+      console.log(`M1: ${misses}`);
+      // let an_array = []
+      for (let miss of shooter.brain.hitHistory) {    // generates a list of miss coords for each miss in hit history
+        console.log(miss);
+        if (miss.state === "miss") {
+          let an_array = []
+          an_array.push(miss.coords.x)
+          an_array.push(miss.coords.y)
+          // let an_array = new Array(miss.coords.x, miss.coords.y)
+          misses.push(an_array);
+          an_array = [];
+          
+          // misses.push([miss.coords.x, miss.coords.y]);
         }
       }
-      console.log(misses);
+      
+      console.log("M2:", misses);
 
-      for (let target of shooter.brain.potentialTargets){
-        for(let miss of misses){
-          if(miss[0]===target[0] && miss[1]===target[1] ){
-            // console.log("ding ding")
-          }
-          else {
-            filtered.push(target);
+      for (let target of shooter.brain.potentialTargets) {    //! needs to filter
+        for (let miss of misses) {
+          if (miss[0] === target[0] && miss[1] === target[1]) {
+            let an_array1 = new Array(target[0],target[1])
+            toDiscard.push(an_array1);
+            an_array1 = [];
+            // toDiscard.push([target[0],target[1]]);
+            // console.log("ding ding")  
+          } else {
+            let an_array2 = new Array(target[0],target[1])
+            filtered.push(an_array2);
+            an_array2 = [];
+            // filtered.push([target[0],target[1]]);
           }
         }
       }
-
-        shooter.brain.potentialTargets = filtered;
+      
+      
+      console.log(`D: ${toDiscard}`);
+      console.log(`F: ${filtered}`);
+      shooter.brain.potentialTargets = filtered;  //! overwrites potentialtargets with filtered
     },
 
+    // decideWhereToShootNext() {
+    //   console.log("shooter");
+    //   let currentlyShooting = this.getShooter();
+      
+
+    //   // shooter.brain.type = "synthetic";   //! this needs to be here to test
+
+    //   // if (shooter.brain.type==="synthetic"){
+    //   //     if(shooter.brain.type.hitHistory.length == 0){
+    //   //       console.log("Shooting random")
+    //   //     }
+    //   //     else{
+    //   //       console.log("shooting from possible targets")
+    //   //     }
+    //   // }
+    // },
 
     saveGame() {
       const game_to_save = {
@@ -216,11 +254,11 @@ export default {
   },
   mounted() {
     this.pullGame();
+    // this.decideWhereToShootNext();
     eventBus.$on("cell-selected", (cell) => {
       this.checkIfHit(cell);
       this.filterOutMissesFromPotentialTargets();
       this.switchPlayer();
-      
     });
   },
   computed: {
