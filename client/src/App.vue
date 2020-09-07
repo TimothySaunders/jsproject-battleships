@@ -262,6 +262,15 @@ export default {
       game_area.classList.add("hidden");
       load_menu.classList.remove("hidden");
     },
+    getShooter() {
+      //!
+      return this.playerOne.playerName === this.playerTurn
+        ? this.playerOne
+        : this.playerTwo;
+    },
+
+    
+
     pullGame(game = null) {
       // Grab the required areas
       const load_menu = document.querySelector("#__app_load_game");
@@ -333,6 +342,22 @@ export default {
     eventBus.$on("change-selected-ship", (ship) => {
       this.selectedShip = ship;
     });
+    eventBus.$on("submit-positions", (shipPositions) => {
+       const player = this.getShooter()
+       player.ships.placedShips = shipPositions
+       player.ships.notSunk = player.ships.placedShips.map((ship) => {
+         const cellArray = []
+         console.log(ship.coords)
+         ship.coords.forEach((coord) => {
+            cellArray.push([coord[0], coord[1]])
+         })
+         console.log(cellArray)
+         return cellArray
+         
+       })
+    });
+
+
   },
   computed: {
     message: function() {
