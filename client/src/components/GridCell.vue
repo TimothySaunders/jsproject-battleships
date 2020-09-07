@@ -67,12 +67,13 @@ export default {
       event.target.parentNode.querySelector(`#g-${coord}`).style.background = "";
       })
     },
+
     enterDrag(event) {
       const shipCells = this.getShipCells(event)
-
-      shipCells.forEach(coord => {
+    // Absolutely quality fudge
+      setTimeout(() => shipCells.forEach(coord => {
       event.target.parentNode.querySelector(`#g-${coord}`).style.background = "purple";
-      })
+      }), 2)
     },
     leaveDrag(event) {
       const shipCells = this.getShipCells(event)

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
     <!-- ship selection grid-->
     <section v-if="gameState==='setUp' && playerTurn!==player.playerName" class="unplacedShips">
       <h2 class="head"> Position Your Fleet!</h2>
@@ -119,7 +118,7 @@ export default {
     eventBus.$on('place-ship', (coords) => {
       const shipIndex = this.unplacedShips.indexOf(this.selectedShip)
       // shipIndex evaluates to -1 and then to correct value
-        // runs the if statement twice so always gets it on the second attempt
+        // runs the if statement twice (reason unknown) so always gets it on the second attempt
       if (shipIndex >= 0) {
         this.unplacedShips[shipIndex].coords = coords
       
