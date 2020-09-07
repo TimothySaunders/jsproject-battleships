@@ -111,7 +111,8 @@ export default {
     submitFleet(){
       if (this.unplacedShips.every(ship => ship.coords.length >0)) {
         eventBus.$emit('submit-positions', this.unplacedShips)
-        //remove images
+        //remove temporary images of placed ships
+        document.querySelectorAll(".grid").forEach(grid => grid.querySelectorAll('.new-ship-image').forEach(node => node.remove()))
       }
     }
   },
