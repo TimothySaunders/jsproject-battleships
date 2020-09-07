@@ -1,5 +1,6 @@
 <template>
   <div>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
     <!-- ship selection grid-->
     <section v-if="gameState==='setUp' && playerTurn!==player.playerName" class="unplacedShips">
       <h2 class="head"> Position Your Fleet!</h2>
@@ -20,7 +21,7 @@
         :key="index + 5"
       >
         <p>{{ship.type}} Name:</p>
-        <input type="text" style="width: 90px;" v-model="unplacedShips[index].name"/>
+        <input class="shipName" type="text" style="width: 90px;" v-model="unplacedShips[index].name"/>
       </div>
       <div class="sail">
         <button v-on:click="submitFleet()" >Set Sail!</button>
@@ -111,7 +112,7 @@ export default {
     },
     submitFleet(){
       if (this.unplacedShips.every(ship => ship.coords.length >0)) {
-        //probably an eventbus
+        eventBus.$emit('submit-positions', this.unplacedShips)
       }
     }
   },
@@ -127,7 +128,7 @@ export default {
         // our coords are numbered 0-7 bottom-to-top
         const row = 8 - parseInt(coords[0][0])
         const startCol = parseInt(coords[0][1]) + 1
-        const endCol = startCol + this.unplacedShips[shipIndex].length //this is 1 more than expected on purpose - visual error on 2-cell ships otherwise
+        const endCol = startCol + this.unplacedShips[shipIndex].length //this is purposefully 1 more than expected- visual error on 2-cell ships otherwise
 
         // builds new ship image and adds to grid
         const newShipImage = document.createElement("img")
@@ -212,6 +213,10 @@ export default {
 
 .head {
     grid-area: head;
+}
+.shipName {
+  background-color: lightgrey;
+  font-family: 'Special Elite', cursive;
 }
 
 .gall {
