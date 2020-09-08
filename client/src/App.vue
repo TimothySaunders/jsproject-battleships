@@ -162,14 +162,11 @@ export default {
 
       if (isHit) {
         const coords = String(targ_x) + String(targ_y);
-        console.log(coords);
 
         target.ships.placedShips.forEach(ship => {
           ship.coords.forEach(ship_coords => {
             if (coords === ship_coords){
-              console.log(ship.hp);
               ship.hp -= 1;
-              console.log(ship.hp);
               target.grid[key].state = "hit";
 
               if (ship.hp === 0){

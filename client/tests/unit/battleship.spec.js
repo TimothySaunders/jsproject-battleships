@@ -34,7 +34,8 @@ describe('App',() => {
             menuState: false,
             selectedShip: {},
             shipOrientation: "h"
-        })
+        });
+
       });
 
     // Test 1: playerOne should have 5 unsunkShips
@@ -64,8 +65,12 @@ describe('App',() => {
     // Test 4: cell states can be changed (untouched => miss)
     it("should change cell state to miss when click and miss", async () => {
 
+        await wrapper.vm.$nextTick()
+
+        // Grab the correct element
         const grid2CellMiss = wrapper.find("#p2 > section > #g-10");
 
+        // Trigger a click on cell
         grid2CellMiss.trigger('click');
 
         await wrapper.vm.$nextTick();
@@ -73,5 +78,20 @@ describe('App',() => {
         // Expect
         expect(wrapper.vm.playerTwo.grid[8].state).toBe("miss");
 
+    });
+
+    // Test 5: Cell states can be changed (untouched => hit)
+    it("should change cell state to hit when clicked and hit", async () => {
+
+        await wrapper.vm.$nextTick()
+
+        const grid2CellMiss = wrapper.find("#p2 > section > #g-00");
+
+        grid2CellMiss.trigger('click');
+
+        await wrapper.vm.$nextTick();
+        
+        // Expect
+        expect(wrapper.vm.playerTwo.grid[0].state).toBe("hit");
     });
 });
