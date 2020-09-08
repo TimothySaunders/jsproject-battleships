@@ -163,6 +163,16 @@ export default {
         //remove temporary images of placed ships
         document.querySelectorAll(".grid").forEach(grid => grid.querySelectorAll('.new-ship-image').forEach(node => node.remove()))
       }
+    },
+
+    getGridArea(orientation, shipCells){
+      // grid rows are numbered 1-8 top-to-botom
+      // our coords are numbered 0-7 bottom-to-top
+      const startRow = 8 - parseInt(shipCells[0][0])
+      const endRow = orientation === "h" ? 8 - parseInt(shipCells[0][0]) : 8 - parseInt(shipCells[0][0]) + shipCells.length
+      const startCol = parseInt(shipCells[0][1]) + 1
+      const endCol = orientation === "v" ? startCol : startCol + shipCells.length //this is purposefully 1 more than expected- visual error on 2-cell ships
+      return `${startRow} / ${startCol} / ${endRow} / ${endCol}`
     }
   },
   mounted(){
@@ -190,13 +200,6 @@ export default {
         if (shipIndex >= 0) {
           this.unplacedShips[shipIndex].coords = coords
 
-          // grid rows are numbered 1-8 top-to-botom
-          // our coords are numbered 0-7 bottom-to-top
-          const startRow = 8 - parseInt(coords[0][0])
-          const endRow = this.shipOrientation === "h" ? 8 - parseInt(coords[0][0]) : 8 - parseInt(coords[0][0]) + this.unplacedShips[shipIndex].length
-          const startCol = parseInt(coords[0][1]) + 1
-          const endCol = this.shipOrientation === "v" ? startCol : startCol + this.unplacedShips[shipIndex].length //this is purposefully 1 more than expected- visual error on 2-cell ships otherwise
-
           // builds new ship image and adds to grid
           const newShipImage = document.createElement("img")
           newShipImage.classList.add("new-ship-image")
@@ -204,8 +207,9 @@ export default {
           newShipImage.width = this.shipOrientation === "h" ? this.selectedShip.length * 53 : 53
           newShipImage.height = this.shipOrientation === "h" ? 53 : this.selectedShip.length * 53
           newShipImage.draggable = false
-          newShipImage.style.gridRow = `${startRow} / ${endRow}`
-          newShipImage.style.gridColumn = `${startCol} / ${endCol}`
+          newShipImage.style.gridArea = this.getGridArea(this.shipOrientation, coords)
+          // newShipImage.style.gridRow = `${startRow} / ${endRow}`
+          // newShipImage.style.gridColumn = `${startCol} / ${endCol}`
           event.target.parentNode.appendChild(newShipImage)
 
           const sourceShip = document.querySelector(`#${this.selectedShip.type}`)
