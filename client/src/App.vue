@@ -160,7 +160,7 @@ export default {
       });
 
       if (isHit) {
-        this.explosionAnimation(cell);
+        this.animation(cell, "explosion");
         const coords = String(targ_x) + String(targ_y);
 
         target.ships.placedShips.forEach(ship => {
@@ -183,12 +183,11 @@ export default {
       this.switchPlayer(3);
     },
 
-    explosionAnimation(target){
+    animation(target, type){
+      const targetID = type==='explosion' ? '#explosionGIF' : '#splashGIF'
       const gridID = this.playerOne.playerName === this.playerTurn ? "#p2" : "#p1"
-      const gif = document.querySelector(`${gridID} > .grid > #explosionGIF`)
-      console.log(target.coords.x, target.coords.y)
+      const gif = document.querySelector(`${gridID} > .grid > ${targetID}`)
       const gridArea = `${8 - target.coords.x} / ${target.coords.y + 1} / ${8 - target.coords.x} / ${target.coords.x + 1}`
-      console.log(gridArea)
       gif.style.gridArea = gridArea
       gif.style.visibility = "visible"
       gif.style.zIndex = "3"
