@@ -38,11 +38,26 @@ describe('App',() => {
       });
 
     // Test 1: playerOne should have 5 unsunkShips
-    it("Players(1) should have 5 unsunkShips", () => {
+    it("should have 5 unsunkShips in player 1", () => {
 
         // Expect
         expect(wrapper.vm.playerOne.ships.notSunk).toHaveLength(5);
 
     });
 
+    // Test 2: playerTwo should have 5 placed ships
+    it("should have 5 placed ships in player 2", () => {
+
+        // Expect
+        expect(wrapper.vm.playerTwo.ships.placedShips).toHaveLength(5);
+
+    });
+    
+    // Test 3: should have inPlay game state
+    it("should have inPlay game state", () => {
+
+        // Expect
+        expect(wrapper.vm.gameState).toBe("inPlay");
+
+    });
 });
