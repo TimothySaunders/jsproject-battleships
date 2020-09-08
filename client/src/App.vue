@@ -552,7 +552,7 @@ button:hover, input[type=submit]:hover{
   width: 100%;
   height: 300px;
   position: fixed;
-  bottom: -30px;
+  bottom: 0px;
   z-index: -1;
 }
 </style>
