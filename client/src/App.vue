@@ -52,7 +52,8 @@
     <main v-if="gameState !== ''" id="__app_game">
 
       <div class="game-turn">
-        <h2>{{ message }}</h2>
+        <h2 v-if="playerTurn === 'intermission'">Switching player</h2>
+        <h2 v-else>{{ message }}</h2>
       </div>
 
       <div class="flex">
@@ -180,7 +181,7 @@ export default {
       }
       this.turns += 1;
       // Switches the player after 1 second. Time can be adjusted if need be
-      setTimeout(() => this.switchPlayer(), 1000);
+      this.switchPlayer(3);
     },
     getTarget() {
       // identify who is getting shot
@@ -189,10 +190,26 @@ export default {
         : this.playerOne;
     },
 
-    switchPlayer() {
-      this.playerOne.playerName === this.playerTurn
-        ? (this.playerTurn = this.playerTwo.playerName)
-        : (this.playerTurn = this.playerOne.playerName);
+    switchPlayer(seconds) {
+
+      if (this.playerOne.playerName === this.playerTurn){
+        
+        this.playerTurn = "intermission";
+
+        setTimeout(() => {
+          this.playerTurn = this.playerTwo.playerName;
+        }, seconds*1000);
+
+      } else {
+
+        this.playerTurn = "intermission";
+
+        setTimeout(() => {
+          this.playerTurn = this.playerOne.playerName;
+        }, seconds*1000);
+
+      }
+
     },
 
     sinkShip(target, index, ship) {
