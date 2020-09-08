@@ -38,7 +38,7 @@
     <!-- game grid -->
     <section
       v-if="gameState!=='setUp:ship-placement' ||  playerTurn===player.playerName"
-      class="grid"
+      class="grid" :class="playerTurn!==player.playerName ? 'bold-border' : ''"
     >
       <grid-cell
         v-for="(cell, key) in player.grid"
@@ -264,6 +264,10 @@ export default {
   grid-template-columns: repeat(8, 1fr);
 }
 
+.bold-border {
+  border: 4px solid rgb(151, 0, 0);
+}
+
 #explosionGIF {
   visibility: hidden;
   grid-area: 1 / 1 / 1 / 1;
@@ -314,12 +318,14 @@ export default {
   padding: 2px;
   border: 1px solid black;
   height: 14px;
+  font-size: 0.8em;
 }
 
 .orie {
   grid-area: orie;
   display: flex;
 }
+
 .gall {
   grid-area: gall;
 }

@@ -196,7 +196,7 @@ export default {
       gif.style.zIndex = "3"
       setTimeout(() => {
           gif.style.visibility = "hidden";
-        }, 3000);
+        }, type==="explosion" ? 3000:1500);
     },
 
     getTarget() {
