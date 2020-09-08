@@ -85,13 +85,32 @@ describe('App',() => {
 
         await wrapper.vm.$nextTick()
 
+        // Grab the cell needed
         const grid2CellMiss = wrapper.find("#p2 > section > #g-00");
 
+        // Trigger click event
         grid2CellMiss.trigger('click');
 
         await wrapper.vm.$nextTick();
         
         // Expect
         expect(wrapper.vm.playerTwo.grid[0].state).toBe("hit");
+    });
+
+    // Test 6: ship is added to sunk when all cells are hit
+    it("should sink a ship when hp === 0", () => {
+
+        // await wrapper.vm.$nextTick();
+
+        // // Grab needed cell
+        // const clicker = wrapper.find("#p2 > section > #g-70");
+
+        // // Trigger click event
+        // clicker.trigger("click");
+
+        // await wrapper.vm.$nextTick();
+
+        // Expect
+        expect(wrapper.vm.playerTwo.ships.sunk).toHaveLength(1);
     });
 });
