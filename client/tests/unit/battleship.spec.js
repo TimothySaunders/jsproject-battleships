@@ -60,4 +60,18 @@ describe('App',() => {
         expect(wrapper.vm.gameState).toBe("inGame");
 
     });
+
+    // Test 4: cell states can be changed (untouched => miss)
+    it("should change cell state to miss when click and miss", async () => {
+
+        const grid2CellMiss = wrapper.find("#p2 > section > #g-10");
+
+        grid2CellMiss.trigger('click');
+
+        await wrapper.vm.$nextTick();
+        
+        // Expect
+        expect(wrapper.vm.playerTwo.grid[8].state).toBe("miss");
+
+    });
 });

@@ -39,7 +39,6 @@
     <section
       v-if="gameState!=='setUp:ship-placement' ||  playerTurn===player.playerName"
       class="grid"
-      :id="player.playerName"
     >
       <grid-cell
         v-for="(cell, key) in player.grid"
