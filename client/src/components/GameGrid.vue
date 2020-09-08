@@ -29,7 +29,7 @@
         <input
           class="shipName"
           type="text"
-          style="width: 90px;"
+          style="width: 100px;"
           v-model="unplacedShips[index].name"
         />
       </div>
@@ -256,7 +256,7 @@ export default {
   border: 1px solid black;
   grid-template-areas:
     ".... head head head head head head ...."
-    ".... .... orie orie orie orie .... ...."
+    ".... orie orie orie orie orie orie ...."
     "gnam gnam gnam gall gall .... .... ...."
     "fnam fnam fnam frig frig frig .... ...."
     "snam snam snam subm subm subm .... ...."
@@ -305,6 +305,8 @@ export default {
   background-color: lightgrey;
   font-family: "Special Elite", cursive;
   padding: 2px;
+  border: 1px solid black;
+  height: 14px;
 }
 
 .orie {
@@ -343,8 +345,9 @@ export default {
 }
 .sail {
   grid-area: sail;
-  margin-top: 16px;
-  padding: 0;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  padding: 6px;
   width: 100px;
 }
 

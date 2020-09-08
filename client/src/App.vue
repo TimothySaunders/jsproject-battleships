@@ -129,7 +129,6 @@ export default {
 
     checkIfHit(cell) {
       let target = this.getTarget();
-      // console.log("cell: ", cell);
       const key = 8 * cell.coords.x + cell.coords.y;
       let isHit;
       let shipToSinkIndex;
@@ -162,6 +161,7 @@ export default {
       });
 
       if (isHit) {
+        this.explosionAnimation(cell);
         const coords = String(targ_x) + String(targ_y);
 
         target.ships.placedShips.forEach(ship => {
@@ -183,6 +183,11 @@ export default {
       // Switches the player after 1 second. Time can be adjusted if need be
       this.switchPlayer(3);
     },
+
+    explosionAnimation(target){
+      console.log(target)
+    },
+
     getTarget() {
       // identify who is getting shot
       return this.playerOne.playerName === this.playerTurn
