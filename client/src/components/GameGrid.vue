@@ -2,31 +2,36 @@
   <div>
     <!-- ship selection grid-->
     <section v-if="gameState==='setUp' && playerTurn!==player.playerName" class="unplacedShips">
-      <h2 class="head"> Position Your Fleet!</h2>
+      <h2 class="head">Position Your Fleet!</h2>
       <div class="orie">
         <label for="orientation">Horizontal</label>
-        <input type="radio" value="h" name="orientation" v-on:change="changeOrientation()" checked>
+        <input type="radio" value="h" name="orientation" v-on:change="changeOrientation()" checked />
         <label for="orientation">Vertical</label>
-        <input type="radio" value="v" name="orientation" v-on:change="changeOrientation()">
+        <input type="radio" value="v" name="orientation" v-on:change="changeOrientation()" />
       </div>
       <div
-        v-for="(ship, key) in unplacedShips"
+        v-for="(imgURL, key) in shipImages"
         :key="key"
         class="shipIcon"
-        :class="ship.type.slice(0, 4).toLowerCase()"
+        :class="unplacedShips[key].type.slice(0, 4).toLowerCase()"
         draggable="true"
-        v-on:dragstart="startDrag($event, ship)"
-        :id="ship.type"
+        v-on:dragstart="startDrag($event, unplacedShips[key])"
+        :id="unplacedShips[key].type"
       >
-        <img :src="ship.imgURL" :width="(ship.length * 53)" height="53" draggable="false"/>
+        <img :src="imgURL" :width="(unplacedShips[key].length * 53)" height="53" draggable="false" />
       </div>
       <div
-        v-for="(ship, index) in unplacedShips"
-        :class="ship.type.slice(0, 1).toLowerCase() +'nam'"
+        v-for="(imgURL, index) in shipImages"
+        :class="unplacedShips[index].type.slice(0, 1).toLowerCase() +'nam'"
         :key="index + 5"
       >
-        <p>{{ship.type}} Name:</p>
-        <input class="shipName" type="text" style="width: 90px;" v-model="unplacedShips[index].name"/>
+        <p>{{unplacedShips[index].type}} Name:</p>
+        <input
+          class="shipName"
+          type="text"
+          style="width: 90px;"
+          v-model="unplacedShips[index].name"
+        />
       </div>
       <button v-on:click="submitFleet()" class="sail">Set Sail!</button>
     </section>
@@ -62,6 +67,12 @@ export default {
   props: ["player", "playerTurn", "gameState", "selectedShip", "shipOrientation"],
   data() {
     return {
+      shipImages: [
+        require("@/assets/ships/galleon.png"), 
+        require("@/assets/ships/frigate.png"), 
+        require("@/assets/ships/destroyer.png"), 
+        require("@/assets/ships/submarine.png"),
+        require("@/assets/ships/carrier.png")],
       unplacedShips: [
         {
           name: "",
@@ -120,7 +131,13 @@ export default {
         this.unplacedShips.find(unplacedShip => ship===unplacedShip).imgURL=require(`../assets/ships/${ship.type.toLowerCase()}.png`)
       }
       eventBus.$emit('change-selected-ship', this.unplacedShips.find(unplacedShip => ship===unplacedShip));
+
+      //make source ship opaque and undraggable to avoid duplicate drags
+      setTimeout(() => {
+      
+      }, 1)
     },
+
     submitFleet(){
       if (this.unplacedShips.every(ship => ship.coords.length >0)) {
         eventBus.$emit('submit-positions', this.unplacedShips)
@@ -136,7 +153,6 @@ export default {
         // runs the if statement twice (reason unknown) so always gets it on the second attempt
       if (shipIndex >= 0) {
         this.unplacedShips[shipIndex].coords = coords
-        console.log(coords)
 
         // grid rows are numbered 1-8 top-to-botom
         // our coords are numbered 0-7 bottom-to-top
@@ -156,10 +172,9 @@ export default {
         newShipImage.style.gridColumn = `${startCol} / ${endCol}`
         event.target.parentNode.appendChild(newShipImage)
 
-        //make source ship opaque and undraggable to avoid duplicate drags
         const sourceShip = document.querySelector(`#${this.selectedShip.type}`)
         sourceShip.draggable = false
-        sourceShip.querySelector("img").style.opacity="0.35"
+        sourceShip.querySelector("img").style.opacity="0.3"
       }
     })
   }
@@ -227,14 +242,14 @@ export default {
 }
 
 .head {
-    grid-area: head;
-    margin: 10px;
-    text-align:center;
-    width: 100%;
+  grid-area: head;
+  margin: 10px;
+  text-align: center;
+  width: 100%;
 }
 .shipName {
   background-color: lightgrey;
-  font-family: 'Special Elite', cursive;
+  font-family: "Special Elite", cursive;
   padding: 2px;
 }
 
@@ -278,7 +293,6 @@ export default {
   padding: 0;
   width: 100px;
 }
-
 
 #g-00 {
   grid-area: g00;
