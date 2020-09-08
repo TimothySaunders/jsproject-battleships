@@ -157,58 +157,162 @@ export default {
         JSON.parse
       );
     },
+    filterOotMisses(){
+      let shooter = this.getShooter();
+      let filtered = [];
+      let potentials = []
+      let rejected = [];
+      let keep = [];
+      // console.log(shooter.brain.hitHistory)
+      let misses = []
+      shooter.brain.hitHistory.forEach((shot) => {      // converts all shots in hit history fo arrys of coords
+        let new_array = Array(shot.coords.x,shot.coords.y);
+        console.log("h:", new_array)
+        misses.push(new_array);
+        })
+        // let x = shot.coords.x
+        // let y = shot.coords.y
+        // let s = shot.state
+        // let new_array = Array(shot.coords.x,shot.coords.y);
+        // console.log("shot:",shot)
+        // console.log("x:",x)
+        // console.log("y:",y)
+        // console.log("s:",s)
+        // console.log("arr:",new_array)
+      // if (shot.state === "miss" || shot.state === "hit"){   /// !ok this should be all the shots there
+      //   misses.push(new_array);
+      // }
+      //  console.log("m:",misses);
+      // })
+
+
+
+
+      shooter.brain.potentialTargets.forEach((target) => {
+        // console.log(target);
+        let new_array = Array(target[0],target[1])
+        console.log("n:",new_array)
+        potentials.push(new_array)
+      })
+      console.log("p:",potentials);
+      
+      
+   
+
+    for (let p of potentials) {
+      let index = 0;
+      for (let m of misses){
+
+       
+        if(parseInt(p[0]) === parseInt(m[0]) && parseInt(p[1]) === parseInt(m[1])) {
+        // if(p[0] === m[0] && p[1] === m[1]) {
+          console.log("spliced:",potentials[index])
+          rejected.push(potentials[index]);
+          // potentials.splice(index,1)
+          // index -=1
+        }else {
+          keep.push(potentials[index]);
+        }
+
+        index +=1
+      }
+      // index +=1
+    }
+
+      let remainingPTs = new Set(keep.map(JSON.stringify)); //! this should remove duplicates but instead it removes non duplicates too
+      keep = Array.from(remainingPTs).map(JSON.parse);
+
+      console.log("re:", rejected)
+      console.log("ke:", keep)
+
+    
+
+    shooter.brain.potentialTargets = keep;
+
+
+      // console.log(misses);
+
+      // shooter.brain.potentialTargets.forEach((target) => { // gets potential targets
+      // //  console.log(target); 
+      // shooter.brain.hitHistory.forEach((shot) => {
+      //   console.log(shot.coords)
+      // })
+
+      // })
+
+
+    },
+
     filterOutMissesFromPotentialTargets() {
       // //! should remove misses from potential targets
       let shooter = this.getShooter();
-     
+
       let toDiscard = new Array();
       let filtered = new Array();
       let misses = [];
       console.log(`M1: ${misses}`);
       // let an_array = []
-      for (let miss of shooter.brain.hitHistory) {    // generates a list of miss coords for each miss in hit history
+      for (let miss of shooter.brain.hitHistory) {
+        // generates a list of miss coords for each miss in hit history
         console.log(miss);
         if (miss.state === "miss") {
-          let an_array = []
-          an_array.push(miss.coords.x)
-          an_array.push(miss.coords.y)
+          let an_array = [];
+          an_array.push(miss.coords.x);
+          an_array.push(miss.coords.y);
           // let an_array = new Array(miss.coords.x, miss.coords.y)
           misses.push(an_array);
           an_array = [];
-          
+
           // misses.push([miss.coords.x, miss.coords.y]);
         }
       }
-      
+
       console.log("M2:", misses);
 
-      for (let target of shooter.brain.potentialTargets) {    //! needs to filter
+      for (let target of shooter.brain.potentialTargets) {
+        //! needs to filter
         for (let miss of misses) {
-          if (miss[0] === target[0] && miss[1] === target[1]) {
-            let an_array1 = new Array(target[0],target[1])
-            toDiscard.push(an_array1);
-            an_array1 = [];
-            // toDiscard.push([target[0],target[1]]);
-            // console.log("ding ding")  
-          } else {
-            let an_array2 = new Array(target[0],target[1])
-            filtered.push(an_array2);
-            an_array2 = [];
-            // filtered.push([target[0],target[1]]);
+          if (
+            String(miss[0]) !== String(target[0]) &&
+            String(miss[1]) !== String(target[1])
+          ) {
+            // toDiscard.push(Array(target[0],target[1]))
+            filtered.push(Array(target[0], target[1]));
           }
+          // else {
+
+          // }
+
+          let fianl = new Set(
+            filtered.map(JSON.stringify)
+          );
+          filtered = Array.from(fianl).map(
+            JSON.parse
+          );
+
+          // if (miss[0] === target[0] && miss[1] === target[1]) {
+          //   let an_array1 = new Array(target[0],target[1])
+          //   toDiscard.push(an_array1);
+          //   an_array1 = [];
+          //   // toDiscard.push([target[0],target[1]]);
+          //   // console.log("ding ding")
+          // } else {
+          //   let an_array2 = new Array(target[0],target[1])
+          //   filtered.push(an_array2);
+          //   an_array2 = [];
+          //   // filtered.push([target[0],target[1]]);
+          // }
         }
       }
-      
-      
-      console.log(`D: ${toDiscard}`);
-      console.log(`F: ${filtered}`);
-      shooter.brain.potentialTargets = filtered;  //! overwrites potentialtargets with filtered
+
+      console.log("D: ", toDiscard);
+      console.log("F: ", filtered);
+      shooter.brain.potentialTargets = filtered; //! overwrites potentialtargets with filtered
     },
 
     // decideWhereToShootNext() {
     //   console.log("shooter");
     //   let currentlyShooting = this.getShooter();
-      
 
     //   // shooter.brain.type = "synthetic";   //! this needs to be here to test
 
@@ -257,7 +361,8 @@ export default {
     // this.decideWhereToShootNext();
     eventBus.$on("cell-selected", (cell) => {
       this.checkIfHit(cell);
-      this.filterOutMissesFromPotentialTargets();
+      this.filterOotMisses();
+      // this.filterOutMissesFromPotentialTargets();
       this.switchPlayer();
     });
   },
