@@ -2,17 +2,29 @@
   <div id="app">
 
     <header id="__app_header">
-      <h1>BATTLESHIPS!!</h1>
+      
+      <div class="w-50 h-flex">
+        <div class="w-20">
+          <img src="@/assets/anchor.png" class="logo logo-l" />
+        </div>
+        <div class="w-60">
+          <h1>BATTLESHIPS!!</h1>
+        </div>
+        <div class="w-20">
+          <img src="@/assets/anchor.png" class="logo logo-r" />
+        </div>
+      </div>
+
       <button v-on:click="menuToggle">Menu</button>
 
       <div id="__app_menu" class="menu hidden">
-        <button v-on:click="newMenu">New Game</button>
-        <button v-if="allGames.length > 0" v-on:click="loadMenu">Load Game</button>
-        <button v-if="gameState === 'inGame'" v-on:click="saveMenu">Save Game</button>
+        <button v-on:click="subMenuToggle('create')">New Game</button>
+        <button v-if="allGames.length > 0" v-on:click="subMenuToggle('load')">Load Game</button>
+        <button v-if="gameState === 'inGame'" v-on:click="subMenuToggle('save')">Save Game</button>
       </div>
     </header>
 
-    <div id="__app_new_game" class="menu-secondary hidden">
+    <div id="__app_create_menu" class="menu-secondary hidden">
       <form v-on:submit.prevent="newGameGenerator">
         <label for="game_name">Game Name:</label>
         <input type="text" id="game_name" v-model="gameName" placeholder="Game Name" required /><br />
@@ -21,13 +33,13 @@
       <!-- Add to this when we create different size boards && personal placement -->
     </div>
 
-    <div id="__app_load_game" class="menu-secondary hidden">
+    <div id="__app_load_menu" class="menu-secondary hidden">
       <ul>
         <game-item v-for="(game, index) in allGames" :key="index" :game="game"></game-item>
       </ul>
     </div>
 
-    <div id="__app_save_game" class="menu-secondary hidden">
+    <div id="__app_save_menu" class="menu-secondary hidden">
 
       <form v-on:submit.prevent="saveGame">
         <label for="game_name">Game Name:</label>
@@ -69,7 +81,7 @@ import GameGrid from "./components/GameGrid.vue";
 import GameItem from "./components/GameItem.vue";
 import GameService from "./services/GameService.js";
 import { eventBus } from "@/main.js";
-import { defaultGrids } from "./services/DefaultGrids.js";
+import defaultGrids from "./services/DefaultGrids.js";
 
 // APP Component
 export default {
@@ -94,32 +106,78 @@ export default {
     "game-item": GameItem
   },
   methods: {
+
+    createGrid(){
+      const max_x = 7;
+      const max_y = 7;
+      const grid = [];
+
+      for (let i=0; i<=max_x;i++){
+        for(let j=0;j<=max_y;j++){
+          const cell = {
+            coords: {x: i, y: j},
+            state: "untouched"
+          }
+          grid.push(cell);
+        }
+      }
+
+      return grid;
+    },
+
+
     checkIfHit(cell) {
       let target = this.getTarget();
+      // console.log("cell: ", cell);
       const key = 8 * cell.coords.x + cell.coords.y;
       let isHit;
       let shipToSinkIndex;
       let shipToSink;
+      let targ_x;
+      let targ_y;
 
       target.ships.notSunk.forEach(ship => {
         let index = 0;
+        
+        for (let ship_coords of ship){
 
-        ship.forEach(ship_coords => {
-          if (
-            ship_coords[0] === cell.coords.x &&
-            ship_coords[1] === cell.coords.y
-          ) {
+          const x = parseInt(ship_coords[0]);
+          const y = parseInt(ship_coords[1]);
+          
+          if (x === cell.coords.x && y === cell.coords.y) {
+            
             // Checks if the coords of the ship selected has a ship in it
+            targ_x = x;
+            targ_y = y;
+
             isHit = true;
             shipToSinkIndex = index;
             shipToSink = ship;
+            // console.log(ship)
           }
-        });
+        }
+
         index += 1;
       });
+
       if (isHit) {
-        this.sinkShip(target, shipToSinkIndex, shipToSink);
-        target.grid[key].state = "hit";
+        const coords = String(targ_x) + String(targ_y);
+        console.log(coords);
+
+        target.ships.placedShips.forEach(ship => {
+          ship.coords.forEach(ship_coords => {
+            if (coords === ship_coords){
+              console.log(ship.hp);
+              ship.hp -= 1;
+              console.log(ship.hp);
+              target.grid[key].state = "hit";
+
+              if (ship.hp === 0){
+                this.sinkShip(target, shipToSinkIndex, shipToSink); 
+              }
+            }
+          });
+        });
       } else {
         target.grid[key].state = "miss";
       }
@@ -154,66 +212,45 @@ export default {
     checkIfAllSunk(player) {
       return player.ships.notSunk.length === player.ships.sunk.length;
     },
-    newMenu(){
-      // Grab the elements needed 
-      const game_area = document.querySelector("#__app_game");
-      const new_game = document.querySelector("#__app_new_game");
 
-      // Hide/Show elements
-      // game_area.classList.add("hidden");
-      new_game.classList.remove("hidden");
-
-      // Set game state
-      this.gameState = "setUp";
-    },
     newGameGenerator(){
-      // Create game state
-      const new_game = {
-        game: [
-          {name: this.gameName},
-          {playerTurn: "Player 1"},
-          {turns: 0},
-          {gameState: ""},
-          {victor: ""},
-          {
-            playerName: "Player 1",
-            ships: {
-              notSunk: [[[1,1]]], //this.generateRandomShips()
-              sunk: []
-            },
-            grid: defaultGrids
-          },
-          {
-            playerName: "Player 2",
-            ships: {
-              notSunk: [[[1,1]]], //this.generateRandomShips()
-              sunk: []
-            },
-            grid: defaultGrids
-          }
-        ]
-      };
+      // Set game state to setUp
+      this.gameState = "setUp";
+      const p1_grid = this.createGrid();
+      const p2_grid = this.createGrid();
 
-      // Add game to db
-      GameService.addGame(new_game);
-    },
-    saveMenu(){
-      // Grab the elements needed 
-      const game_area = document.querySelector("#__app_game");
-      const save_form = document.querySelector("#__app_save_game");
+      // Set up the players
+      this.playerOne = {
+        playerName: "Player 1",
+        ships: {
+          notSunk: [],
+          sunk: []
+        },
+        grid: p1_grid
+      }
 
-      // Hide/Show elements
-      game_area.classList.add("hidden");
-      save_form.classList.remove("hidden");
+      this.playerTwo = {
+        playerName: "Player 2",
+        ships: {
+          notSunk: [],
+          sunk: []
+        },
+        grid: p2_grid
+      }
+
+      // Set game state to setUp:ship-placement
+      this.gameState = "setUp:ship-placement";
+
     },
+    
     saveGame() {
       // Grab the elements needed 
       const game_area = document.querySelector("#__app_game");
-      const save_form = document.querySelector("#__app_save_game");
+      const save_form = document.querySelector("#__app_save_menu");
 
       if (this.gameName !== ""){
 
-        if (GameService.getById(this.gameID)){
+        if (GameService.getById(this.gameID) && this.gameID !== ""){
           const game_to_save = {
             // creates a game object to hold current game state and populates game_to_save with current state
             game: [
@@ -237,7 +274,7 @@ export default {
               { name: this.gameName },
               { playerTurn: this.playerTurn },
               { turns: this.turns },
-              { gamingRunning: this.gamingRunning },
+              { gameState: this.gameState },
               { victor: this.victor },
               this.playerOne,
               this.playerTwo
@@ -245,7 +282,7 @@ export default {
           };
 
           // Add to DB
-          GameService.addGame(this.gameID, game_to_save);
+          GameService.addGame(game_to_save);
         }
 
         // Hide/Show elements
@@ -253,27 +290,17 @@ export default {
         save_form.classList.add("hidden");
       }
     },
-    loadMenu(){
-      // Grab the required areas
-      const load_menu = document.querySelector("#__app_load_game");
-      const game_area = document.querySelector("#__app_game");
 
-      // Hide/Show as appropriate
-      game_area.classList.add("hidden");
-      load_menu.classList.remove("hidden");
-    },
     getShooter() {
-      //!
+      
       return this.playerOne.playerName === this.playerTurn
         ? this.playerOne
         : this.playerTwo;
     },
 
-    
-
     pullGame(game = null) {
       // Grab the required areas
-      const load_menu = document.querySelector("#__app_load_game");
+      const load_menu = document.querySelector("#__app_load_menu");
       const game_area = document.querySelector("#__app_game");
 
       // Run  check
@@ -297,29 +324,52 @@ export default {
             load_menu.classList.add("hidden");
         });
       }
-      // GameService.getGame().then(result => {
-      //   // takes seed game at array index 0
-      //   this.gameID = result[0]._id;
-      //   this.playerOne = result[0].game[5];
-      //   this.playerTwo = result[0].game[6];
-      //   this.playerTurn = result[0].game[1].playerTurn;
-      //   this.turns = result[0].game[2].turns;
-      //   this.gameState = result[0].game[3].gameState;
-      //   this.victor = result[0].game[4].victor;
-      //   this.gameName = result[0].game[0].name;
-
-      //   this.playerTurn = this.playerOne.playerName;
-      //   this.gameState = 'inGame';
-      // });
     },
     menuToggle: function(){
+      // Grab the main menu
       const menu = document.querySelector('#__app_menu');
+
+      // Grab all submenus
+      const save_menu = document.querySelector("#__app_save_menu");
+      const load_menu = document.querySelector("#__app_load_menu");
+      const create_menu = document.querySelector("#__app_create_menu");
+
       if (this.menuState === false){
         menu.classList.remove("hidden");
         this.menuState = true;
       } else {
         menu.classList.add("hidden");
+        save_menu.classList.add("hidden");
+        load_menu.classList.add("hidden");
+        create_menu.classList.add("hidden");
         this.menuState = false;
+      }
+    },
+    subMenuToggle: function(menu) {
+      // Grab all submenus
+      const save_menu = document.querySelector("#__app_save_menu");
+      const load_menu = document.querySelector("#__app_load_menu");
+      const create_menu = document.querySelector("#__app_create_menu");
+
+      // Check what menu to toggle
+      if (menu === "create") {
+        // show create menu, hide others
+        save_menu.classList.add("hidden");
+        load_menu.classList.add("hidden");
+
+        create_menu.classList.remove("hidden");
+      } else if (menu === "load") {
+        // show create menu, hide others
+        save_menu.classList.add("hidden");
+        create_menu.classList.add("hidden");
+
+        load_menu.classList.remove("hidden");
+      } else if (menu === "save") {
+        // show create menu, hide others
+        load_menu.classList.add("hidden");
+        create_menu.classList.add("hidden");
+
+        save_menu.classList.remove("hidden");
       }
     },
     dbGames: function(){
@@ -376,6 +426,9 @@ export default {
 
 
 <style>
+*{
+  font-family: 'Kumbh Sans', sans-serif;
+}
 body{
   margin: 0;
   padding: 0;
@@ -394,12 +447,39 @@ body{
 header{
   padding: 10px;
   text-align: center;
-  background: rgb(233, 233, 233);
+  background: rgb(46, 110, 170);
+}
+header h1{
+  font-family: 'Oswald', sans-serif;
+  font-size: 50px;
 }
 ul{
   margin: 0;
   padding: 0;
   list-style-type: none;
+}
+
+.w-50{
+  width: 50%;
+}
+.w-60{
+  width: 60%;
+}
+.w-20{
+  width: 20%;
+}
+.h-flex{
+  margin: 10px auto;
+  display: flex;
+}
+.logo{
+  height: 150px;
+}
+.logo-l{
+  rotate: 325deg;
+}
+.logo-r{
+  rotate: 25deg;
 }
 
 .game-turn{
@@ -409,28 +489,39 @@ ul{
 .menu{
   margin: 20px 0 0 0;
   padding: 10px;
-  background: rgb(219, 219, 219);
+  background: rgb(46, 131, 211);
 }
 .menu-secondary{
   padding: 10px;
-  height: calc(100vh - 234px);
   background: rgb(216, 216, 216);
   text-align: center;
 }
 
 label{
   width: 40%;
+  font-size: 20px;
 }
 input{
   margin: 10px;
   padding: 10px 5px;
   width: 60%;
+  border: 2px solid transparent;
+  font-size: 20px;
 }
 
 button, input[type=submit]{
   margin: 0 10px;
   padding: 10px;
   width: 30%;
+  border: 2px solid transparent;
+  background: rgb(20, 68, 112);
+  color: rgb(255, 255, 255);
+  font-size: 20px;
+}
+
+button:hover, input[type=submit]:hover{
+  background: rgb(11, 89, 163);
+  cursor: pointer;
 }
 
 .hidden{

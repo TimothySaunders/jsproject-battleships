@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- ship selection grid-->
-    <section v-if="gameState==='setUp' && playerTurn!==player.playerName" class="unplacedShips">
+    <section v-if="gameState==='setUp:ship-placement' && playerTurn!==player.playerName" class="unplacedShips">
       <h2 class="head"> Position Your Fleet!</h2>
       <div
         v-for="(ship, key) in unplacedShips"
@@ -63,35 +63,40 @@ export default {
           type: "Galleon",
           length: 2,
           imgURL: require("@/assets/ships/galleon.png"),
-          coords: []
+          coords: [],
+          hp: 2
         },
         {
           name: "",
           type: "Frigate",
           length: 3,
           imgURL: require("@/assets/ships/frigate.png"),
-          coords: []
+          coords: [],
+          hp: 3
         },
         {
           name: "",
           type: "Destroyer",
           length: 4,
           imgURL: require("@/assets/ships/destroyer.png"),
-          coords: []
+          coords: [],
+          hp: 4
         },
         {
           name: "",
           type: "Submarine",
           length: 3,
           imgURL: require("@/assets/ships/submarine.png"),
-          coords: []
+          coords: [],
+          hp: 3
         },
         {
           name: "",
           type: "Carrier",
           length: 5,
           imgURL: require("@/assets/ships/carrier.png"),
-          coords: []
+          coords: [],
+          hp: 5
         }
       ]
     };

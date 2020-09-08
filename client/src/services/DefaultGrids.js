@@ -1,7 +1,5 @@
 // This is so we can import the default grid layout without having hundereds of duplicate lines in app.vue
-export const defaultGrids = () => {
-    return {
-        grid: [
+export default [
             {                                   // column 1
                 coords: { x: 0, y: 0 },
                 state: "untouched"
@@ -257,8 +255,5 @@ export const defaultGrids = () => {
             {
                 coords: { x: 7, y: 7 },
                 state: "untouched"
-            },
-
+            }
         ]
-    }
-}
