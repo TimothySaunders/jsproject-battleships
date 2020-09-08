@@ -58,11 +58,11 @@
       <div class="flex">
         <div>
           <p>Player 1 board</p>
-          <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip"></game-grid>
+          <game-grid :player="playerOne" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip" :shipOrientation="shipOrientation"></game-grid>
         </div>
         <div>
           <p>Player 2 board</p>
-          <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip"></game-grid>
+          <game-grid :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip" :shipOrientation="shipOrientation"></game-grid>
         </div>
       </div>
 
@@ -96,9 +96,10 @@ export default {
       victor: "",
       gameName: "",
       gameID: "",
-      allGames: null,
+      allGames: [],
       menuState: false,
-      selectedShip: {}
+      selectedShip: {},
+      shipOrientation: "h"
     }
   },
   components: {
@@ -391,6 +392,10 @@ export default {
     
     eventBus.$on("change-selected-ship", (ship) => {
       this.selectedShip = ship;
+    });
+
+    eventBus.$on('change-orientation', orientation => {
+      this.shipOrientation = orientation;
     });
 
     eventBus.$on("submit-positions", (shipPositions) => {

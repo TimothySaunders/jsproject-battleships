@@ -18,7 +18,7 @@ import { eventBus } from "../main";
 
 export default {
   name: "grid-cell",
-  props: ["cell", "noBorder", "ships", "gameState", "selectedShip", "playerTurn", "player"],
+  props: ["cell", "noBorder", "ships", "gameState", "selectedShip", "playerTurn", "player", "shipOrientation"],
   data() {
     return {
       hasShip: false,
@@ -83,13 +83,17 @@ export default {
       })
     },
     getShipCells(event){
-      const currentCellX = parseInt(event.target.id.slice(2, 3))
-      const currentCellY = parseInt(event.target.id.slice(3, 4))
+      const currentCellRow = parseInt(event.target.id.slice(2, 3))
+      const currentCellCol = parseInt(event.target.id.slice(3, 4))
 
       const shipCells = []
       for (let i=0; i<this.selectedShip.length; i++){
-          if ((currentCellY + i) <= 7) {
-            const nextCell = currentCellX.toString() + (currentCellY + i).toString()
+          if ((currentCellCol + i) <= 7 && this.shipOrientation === 'h') {
+            const nextCell = currentCellRow.toString() + (currentCellCol + i).toString()
+            shipCells.push(nextCell)
+          }
+          if ((currentCellRow - i) >= 0 && this.shipOrientation === 'v') {
+            const nextCell = (currentCellRow - i).toString() + currentCellCol.toString()
             shipCells.push(nextCell)
           }
       }
@@ -102,7 +106,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .cell {
   border-bottom: 1px solid black;
   border-left: 1px solid black;

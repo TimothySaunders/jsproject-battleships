@@ -2,33 +2,42 @@
   <div>
     <!-- ship selection grid-->
     <section v-if="gameState==='setUp:ship-placement' && playerTurn!==player.playerName" class="unplacedShips">
-      <h2 class="head"> Position Your Fleet!</h2>
+      <h2 class="head">Position Your Fleet!</h2>
+      <div class="orie">
+        <label for="orientation">Horizontal</label>
+        <input type="radio" value="h" name="orientation" v-on:change="changeOrientation()" checked />
+        <label for="orientation">Vertical</label>
+        <input type="radio" value="v" name="orientation" v-on:change="changeOrientation()" />
+      </div>
       <div
-        v-for="(ship, key) in unplacedShips"
+        v-for="(imgURL, key) in shipImages"
         :key="key"
         class="shipIcon"
-        :class="ship.type.slice(0, 4).toLowerCase()"
+        :class="unplacedShips[key].type.slice(0, 4).toLowerCase()"
         draggable="true"
-        v-on:dragstart="startDrag($event, ship)"
-        :id="ship.type"
+        v-on:dragstart="startDrag($event, unplacedShips[key])"
+        :id="unplacedShips[key].type"
       >
-        <img :src="ship.imgURL" :width="(ship.length * 53)" height="53" draggable="false"/>
+        <img :src="imgURL" :width="(unplacedShips[key].length * 53)" height="53" draggable="false" />
       </div>
       <div
-        v-for="(ship, index) in unplacedShips"
-        :class="ship.type.slice(0, 1).toLowerCase() +'nam'"
+        v-for="(imgURL, index) in shipImages"
+        :class="unplacedShips[index].type.slice(0, 1).toLowerCase() +'nam'"
         :key="index + 5"
       >
-        <p>{{ship.type}} Name:</p>
-        <input class="shipName" type="text" style="width: 90px;" v-model="unplacedShips[index].name"/>
+        <p>{{unplacedShips[index].type}} Name:</p>
+        <input
+          class="shipName"
+          type="text"
+          style="width: 90px;"
+          v-model="unplacedShips[index].name"
+        />
       </div>
-      <div class="sail">
-        <button v-on:click="submitFleet()" >Set Sail!</button>
-      </div>
+      <button v-on:click="submitFleet()" class="sail">Set Sail!</button>
     </section>
     <!-- game grid -->
     <section
-      v-if="gameState!=='setUp' ||  playerTurn===player.playerName"
+      v-if="gameState!=='setUp:ship-placement' ||  playerTurn===player.playerName"
       class="grid"
       :id="player.playerName"
     >
@@ -43,6 +52,7 @@
         :selectedShip="selectedShip"
         :playerTurn="playerTurn"
         :player="player"
+        :shipOrientation="shipOrientation"
       ></grid-cell>
     </section>
   </div>
@@ -54,9 +64,15 @@ import { eventBus } from "@/main.js";
 
 export default {
   name: "game-grid",
-  props: ["player", "playerTurn", "gameState", "selectedShip"],
+  props: ["player", "playerTurn", "gameState", "selectedShip", "shipOrientation"],
   data() {
     return {
+      shipImages: [
+        require("@/assets/ships/galleon.png"), 
+        require("@/assets/ships/frigate.png"), 
+        require("@/assets/ships/destroyer.png"), 
+        require("@/assets/ships/submarine.png"),
+        require("@/assets/ships/carrier.png")],
       unplacedShips: [
         {
           name: "",
@@ -110,9 +126,23 @@ export default {
     },
   },
   methods: {
-    startDrag(event, ship) {
-      eventBus.$emit('change-selected-ship', ship);
+    changeOrientation(){
+      eventBus.$emit('change-orientation', event.target.value)
     },
+    startDrag(event, ship) {
+      if(this.shipOrientation === 'v'){
+        this.unplacedShips.find(unplacedShip => ship===unplacedShip).imgURL=require(`../assets/ships/${ship.type.toLowerCase()}_v.png`)
+      } else {
+        this.unplacedShips.find(unplacedShip => ship===unplacedShip).imgURL=require(`../assets/ships/${ship.type.toLowerCase()}.png`)
+      }
+      eventBus.$emit('change-selected-ship', this.unplacedShips.find(unplacedShip => ship===unplacedShip));
+
+      //make source ship opaque and undraggable to avoid duplicate drags
+      setTimeout(() => {
+      
+      }, 1)
+    },
+
     submitFleet(){
       if (this.unplacedShips.every(ship => ship.coords.length >0)) {
         eventBus.$emit('submit-positions', this.unplacedShips)
@@ -124,39 +154,57 @@ export default {
   mounted(){
     eventBus.$on('place-ship', (coords) => {
       const shipIndex = this.unplacedShips.indexOf(this.selectedShip)
-      // shipIndex evaluates to -1 and then to correct value
-        // runs the if statement twice (reason unknown) so always gets it on the second attempt
-      if (shipIndex >= 0) {
-        this.unplacedShips[shipIndex].coords = coords
-      
-        // grid rows are numbered 1-8 top-to-botom
-        // our coords are numbered 0-7 bottom-to-top
-        const row = 8 - parseInt(coords[0][0])
-        const startCol = parseInt(coords[0][1]) + 1
-        const endCol = startCol + this.unplacedShips[shipIndex].length //this is purposefully 1 more than expected- visual error on 2-cell ships otherwise
 
-        // builds new ship image and adds to grid
-        const newShipImage = document.createElement("img")
-        newShipImage.classList.add("new-ship-image")
-        newShipImage.src = this.selectedShip.imgURL
-        newShipImage.width = this.selectedShip.length * 53
-        newShipImage.height = 53
-        newShipImage.draggable = false
-        newShipImage.style.gridRow = `${row} / ${row}`
-        newShipImage.style.gridColumn = `${startCol} / ${endCol}`
-        event.target.parentNode.appendChild(newShipImage)
+      // checks if placed ship overlaps iwth other placed ships
+      const allShipCells = []
+      this.unplacedShips.forEach((ship) => {
+        ship.coords.forEach((coord) => {
+          allShipCells.push(coord)
+        })
+      })
+      let overlap = false;
+      coords.forEach((coord) => {
+        if (allShipCells.includes(coord)) {
+          overlap = true
+        }
+      })
 
-        //make source ship opaque and undraggable to avoid duplicate drags
-        const sourceShip = document.querySelector(`#${this.selectedShip.type}`)
-        sourceShip.draggable = false
-        sourceShip.querySelector("img").style.opacity="0.35"
+      if (overlap===false) {
+
+        // shipIndex evaluates to -1 and then to correct value
+          // runs the if statement twice (reason unknown) so always gets it on the second attempt
+        if (shipIndex >= 0) {
+          this.unplacedShips[shipIndex].coords = coords
+
+          // grid rows are numbered 1-8 top-to-botom
+          // our coords are numbered 0-7 bottom-to-top
+          const startRow = 8 - parseInt(coords[0][0])
+          const endRow = this.shipOrientation === "h" ? 8 - parseInt(coords[0][0]) : 8 - parseInt(coords[0][0]) + this.unplacedShips[shipIndex].length
+          const startCol = parseInt(coords[0][1]) + 1
+          const endCol = this.shipOrientation === "v" ? startCol : startCol + this.unplacedShips[shipIndex].length //this is purposefully 1 more than expected- visual error on 2-cell ships otherwise
+
+          // builds new ship image and adds to grid
+          const newShipImage = document.createElement("img")
+          newShipImage.classList.add("new-ship-image")
+          newShipImage.src = this.selectedShip.imgURL
+          newShipImage.width = this.shipOrientation === "h" ? this.selectedShip.length * 53 : 53
+          newShipImage.height = this.shipOrientation === "h" ? 53 : this.selectedShip.length * 53
+          newShipImage.draggable = false
+          newShipImage.style.gridRow = `${startRow} / ${endRow}`
+          newShipImage.style.gridColumn = `${startCol} / ${endCol}`
+          event.target.parentNode.appendChild(newShipImage)
+
+          const sourceShip = document.querySelector(`#${this.selectedShip.type}`)
+          sourceShip.draggable = false
+          sourceShip.querySelector("img").style.opacity="0.3"
+        }
       }
     })
   }
 };
 </script>
 
-<style>
+<style scoped>
 .grid {
   background-image: url("../assets/ocean1.jpg");
   background-size: 100% 100%;
@@ -188,8 +236,8 @@ export default {
   height: 424px;
   border: 1px solid black;
   grid-template-areas:
-    ".... .... head head head head .... ...."
-    ".... .... head head head head .... ...."
+    ".... head head head head head head ...."
+    ".... .... orie orie orie orie .... ...."
     "gnam gnam gnam gall gall .... .... ...."
     "fnam fnam fnam frig frig frig .... ...."
     "snam snam snam subm subm subm .... ...."
@@ -217,13 +265,21 @@ export default {
 }
 
 .head {
-    grid-area: head;
+  grid-area: head;
+  margin: 10px;
+  text-align: center;
+  width: 100%;
 }
 .shipName {
   background-color: lightgrey;
-  font-family: 'Special Elite', cursive;
+  font-family: "Special Elite", cursive;
+  padding: 2px;
 }
 
+.orie {
+  grid-area: orie;
+  display: flex;
+}
 .gall {
   grid-area: gall;
 }
@@ -257,8 +313,9 @@ export default {
 .sail {
   grid-area: sail;
   margin-top: 16px;
+  padding: 0;
+  width: 100px;
 }
-
 
 #g-00 {
   grid-area: g00;
