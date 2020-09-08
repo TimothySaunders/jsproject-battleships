@@ -177,6 +177,7 @@ export default {
         });
       } else {
         target.grid[key].state = "miss";
+        this.animation(cell, "splash")
       }
       this.turns += 1;
       // Switches the player after 1 second. Time can be adjusted if need be
@@ -187,7 +188,9 @@ export default {
       const targetID = type==='explosion' ? '#explosionGIF' : '#splashGIF'
       const gridID = this.playerOne.playerName === this.playerTurn ? "#p2" : "#p1"
       const gif = document.querySelector(`${gridID} > .grid > ${targetID}`)
-      const gridArea = `${8 - target.coords.x} / ${target.coords.y + 1} / ${8 - target.coords.x} / ${target.coords.x + 1}`
+      const gridArea = `${8 - target.coords.x} / ${target.coords.y + 1} / ${8 - target.coords.x} / ${target.coords.y + 1}`
+      console.log(`x: ${target.coords.x}, y: ${target.coords.y}`)
+      console.log(gridArea)
       gif.style.gridArea = gridArea
       gif.style.visibility = "visible"
       gif.style.zIndex = "3"

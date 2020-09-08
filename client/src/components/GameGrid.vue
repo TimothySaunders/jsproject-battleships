@@ -64,6 +64,7 @@
       :style="{'grid-area': getGridArea(ship.orientation, ship.coords)}"
       >
       <img src="@/assets/explosion.gif" id="explosionGIF" width="53" height="53">
+      <img src="@/assets/splash.gif" id="splashGIF" width="53" height="53">
     </section>
   </div>
 </template>
@@ -264,6 +265,11 @@ export default {
 }
 
 #explosionGIF {
+  visibility: hidden;
+  grid-area: 1 / 1 / 1 / 1;
+}
+
+#splashGIF {
   visibility: hidden;
   grid-area: 1 / 1 / 1 / 1;
 }
