@@ -58,7 +58,7 @@
       :src="ship.imgURL" 
       class="shipimg"
       :class="playerTurn===player.playerName ? '' : 'hidden'"
-      :key="index + 10" 
+      :key="`${player.name}${index}`"
       :height="ship.orientation==='v' ? ship.length*53 : 53"
       :width="ship.orientation==='v' ? 53 : ship.length*53"
       :style="{'grid-area': getGridArea(ship.orientation, ship.coords)}"
