@@ -173,8 +173,8 @@ export default {
 
               if (ship.hp === 0){
                 this.sinkShip(target, shipToSinkIndex, shipToSink); 
-
-                this.turnOutcome = `${this.playerTurn} sunk ${this.playerTurn === this.playerOne.playerName ? this.playerTwo.playerName : this.playerOne.playerName}s ${ship.type}!`
+                const shipName = ship.name==="" ? ship.type : `ship ${ship.name}`
+                this.turnOutcome = `${this.playerTurn} sunk ${this.playerTurn === this.playerOne.playerName ? this.playerTwo.playerName : this.playerOne.playerName}s ${shipName}!`
                 setTimeout(() => {
                   this.turnOutcome = ""
                 }, 3000);
