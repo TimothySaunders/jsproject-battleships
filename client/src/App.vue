@@ -26,8 +26,8 @@
 
     <div id="__app_create_menu" class="menu-secondary hidden">
       <form v-on:submit.prevent="newGameGenerator">
-        <label for="game_name">Game Name:</label>
-        <input type="text" id="game_name" v-model="gameName" placeholder="Game Name" required /><br />
+        <label for="game_name_new">Game Name:</label>
+        <input type="text" id="game_name_new" v-model="gameName" placeholder="Game Name" required /><br />
         <input type="submit" value="Create Game" />
       </form>
       <!-- Add to this when we create different size boards && personal placement -->
@@ -42,8 +42,8 @@
     <div id="__app_save_menu" class="menu-secondary hidden">
 
       <form v-on:submit.prevent="saveGame">
-        <label for="game_name">Game Name:</label>
-        <input type="text" id="game_name" v-model="gameName" placeholder="Game Name" required /><br />
+        <label for="game_name_save">Game Name:</label>
+        <input type="text" id="game_name_save" v-model="gameName" placeholder="Game Name" required /><br />
         <input type="submit" value="Save Game" />
       </form>
 
