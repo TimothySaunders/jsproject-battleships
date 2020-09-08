@@ -57,7 +57,7 @@ describe('App',() => {
     it("should have inPlay game state", () => {
 
         // Expect
-        expect(wrapper.vm.gameState).toBe("inPlay");
+        expect(wrapper.vm.gameState).toBe("inGame");
 
     });
 });
