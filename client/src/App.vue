@@ -72,7 +72,7 @@
     <main v-else class="center" id="__app_game">
       <h2>Please start a new game or load a game to continue</h2>
     </main>
-
+    <img v-if="gameState===''" id="footer-image" src="@/assets/sea1.gif">
   </div>
 </template>
 
@@ -546,5 +546,13 @@ button:hover, input[type=submit]:hover{
 
 .hidden{
   display: none;
+}
+
+#footer-image {
+  width: 100%;
+  height: 300px;
+  position: fixed;
+  bottom: -30px;
+  z-index: -1;
 }
 </style>
