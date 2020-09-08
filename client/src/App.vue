@@ -153,7 +153,6 @@ export default {
             isHit = true;
             shipToSinkIndex = index;
             shipToSink = ship;
-            // console.log(ship)
           }
         }
 
@@ -185,7 +184,17 @@ export default {
     },
 
     explosionAnimation(target){
-      console.log(target)
+      const gridID = this.playerOne.playerName === this.playerTurn ? "#p2" : "#p1"
+      const gif = document.querySelector(`${gridID} > .grid > #explosionGIF`)
+      console.log(target.coords.x, target.coords.y)
+      const gridArea = `${8 - target.coords.x} / ${target.coords.y + 1} / ${8 - target.coords.x} / ${target.coords.x + 1}`
+      console.log(gridArea)
+      gif.style.gridArea = gridArea
+      gif.style.visibility = "visible"
+      gif.style.zIndex = "3"
+      setTimeout(() => {
+          gif.style.visibility = "hidden";
+        }, 3000);
     },
 
     getTarget() {

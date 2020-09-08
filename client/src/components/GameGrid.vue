@@ -63,6 +63,7 @@
       :width="ship.orientation==='v' ? 53 : ship.length*53"
       :style="{'grid-area': getGridArea(ship.orientation, ship.coords)}"
       >
+      <img src="@/assets/explosion.gif" id="explosionGIF" width="53" height="53">
     </section>
   </div>
 </template>
@@ -152,11 +153,6 @@ export default {
         this.unplacedShips.find(unplacedShip => ship===unplacedShip).orientation = 'h'
       }
       eventBus.$emit('change-selected-ship', this.unplacedShips.find(unplacedShip => ship===unplacedShip));
-
-      //make source ship opaque and undraggable to avoid duplicate drags
-      setTimeout(() => {
-      
-      }, 1)
     },
 
     submitFleet(){
@@ -265,6 +261,11 @@ export default {
     ".... .... .... sail sail .... .... ....";
   grid-template-rows: repeat(8, 1fr);
   grid-template-columns: repeat(8, 1fr);
+}
+
+#explosionGIF {
+  visibility: hidden;
+  grid-area: 1 / 1 / 1 / 1;
 }
 
 .shipimg {
