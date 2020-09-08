@@ -10,15 +10,15 @@
         <input type="radio" value="v" name="orientation" v-on:change="changeOrientation()" />
       </div>
       <div
-        v-for="(imgURL, key) in shipImages"
-        :key="key"
+        v-for="(imgURL, index) in shipImages"
+        :key="index"
         class="shipIcon"
-        :class="unplacedShips[key].type.slice(0, 4).toLowerCase()"
+        :class="unplacedShips[index].type.slice(0, 4).toLowerCase()"
         draggable="true"
-        v-on:dragstart="startDrag($event, unplacedShips[key])"
-        :id="unplacedShips[key].type"
+        v-on:dragstart="startDrag($event, unplacedShips[index])"
+        :id="unplacedShips[index].type"
       >
-        <img :src="imgURL" :width="(unplacedShips[key].length * 53)" height="53" draggable="false" />
+        <img :src="imgURL" :width="(unplacedShips[index].length * 53)" height="53" draggable="false" />
       </div>
       <div
         v-for="(imgURL, index) in shipImages"
@@ -45,6 +45,7 @@
         v-for="(cell, key) in player.grid"
         :key="key"
         :cell="cell"
+        class="gridCell"
         :id="'g-' + cell.coords.x + cell.coords.y"
         :noBorder="noBorder"
         :ships="player.ships.notSunk"
@@ -56,8 +57,9 @@
       ></grid-cell>
       <img v-for="(ship, index) in player.ships.placedShips" 
       :src="ship.imgURL" 
-      class="shipimg" 
-      :key=index 
+      class="shipimg"
+      :class="playerTurn===player.playerName ? '' : 'hidden'"
+      :key="index + 10" 
       :height="ship.orientation==='v' ? ship.length*53 : 53"
       :width="ship.orientation==='v' ? 53 : ship.length*53"
       :style="{'grid-area': getGridArea(ship.orientation, ship.coords)}"
@@ -265,6 +267,18 @@ export default {
     ".... .... .... sail sail .... .... ....";
   grid-template-rows: repeat(8, 1fr);
   grid-template-columns: repeat(8, 1fr);
+}
+
+.shipimg {
+  z-index: 1;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.gridCell {
+  z-index: 2;
 }
 
 .unplacedShips > div {
