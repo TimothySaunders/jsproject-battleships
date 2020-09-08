@@ -52,8 +52,9 @@
     <main v-if="gameState !== ''" id="__app_game">
 
       <div class="game-turn">
-        <h2 v-if="playerTurn === 'intermission'">Switching player</h2>
-        <h2 v-else>{{ message }}</h2>
+        <h2 v-if="playerTurn === 'intermission' && turnOutcome === ''">Switching player</h2>
+        <h2 v-if="playerTurn !== 'intermission' && turnOutcome === ''">{{ message }}</h2>
+        <h2 v-if="turnOutcome !== ''">{{ turnOutcome }}</h2>
       </div>
 
       <div class="flex">
@@ -99,7 +100,8 @@ export default {
       allGames: [],
       menuState: false,
       selectedShip: {},
-      shipOrientation: "h"
+      shipOrientation: "h",
+      turnOutcome: ""
     }
   },
   components: {
@@ -129,7 +131,6 @@ export default {
 
     checkIfHit(cell) {
       let target = this.getTarget();
-      // console.log("cell: ", cell);
       const key = 8 * cell.coords.x + cell.coords.y;
       let isHit;
       let shipToSinkIndex;
@@ -172,6 +173,11 @@ export default {
 
               if (ship.hp === 0){
                 this.sinkShip(target, shipToSinkIndex, shipToSink); 
+
+                this.turnOutcome = `${this.playerTurn} sunk ${this.playerTurn === this.playerOne.playerName ? this.playerTwo.playerName : this.playerOne.playerName}s ${ship.type}!`
+                setTimeout(() => {
+                  this.turnOutcome = ""
+                }, 3000);
               }
             }
           });
@@ -435,12 +441,15 @@ export default {
   computed: {
     message: function() {
       // Provides feedback to the user describing current game state
+      if (this.turnOutcome !=="") {
+        return this.turnOutcome
+      } else {
       return this.gameState==='inGame'
         ? `${this.playerTurn}'s turn to Fire!`
         : `${this.victor} Wins!`;
+      }
     }
   },
-  watch: {}
 };
 </script>
 
@@ -477,6 +486,10 @@ ul{
   margin: 0;
   padding: 0;
   list-style-type: none;
+}
+
+#turnOutcome {
+  visibility: hidden;
 }
 
 .w-50{
