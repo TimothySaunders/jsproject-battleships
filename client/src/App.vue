@@ -81,7 +81,6 @@ import GameGrid from "./components/GameGrid.vue";
 import GameItem from "./components/GameItem.vue";
 import GameService from "./services/GameService.js";
 import { eventBus } from "@/main.js";
-import defaultGrids from "./services/DefaultGrids.js";
 
 // APP Component
 export default {
