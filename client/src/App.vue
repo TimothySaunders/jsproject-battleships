@@ -408,6 +408,7 @@ export default {
          })
          return cellArray
        })
+       this.shipOrientation = "h"
        this.switchPlayer()
        player = this.getShooter()
        if (player.ships.notSunk.length !== 0) {

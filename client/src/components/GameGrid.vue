@@ -54,6 +54,13 @@
         :player="player"
         :shipOrientation="shipOrientation"
       ></grid-cell>
+      <img v-for="(ship, index) in player.ships.placedShips" 
+      :src="ship.imgURL" 
+      class="shipimg" 
+      :key=index 
+      :height="ship.orientation==='v' ? ship.length*53 : 53"
+      :width="ship.orientation==='v' ? 53 : ship.length*53"
+      >
     </section>
   </div>
 </template>
@@ -79,6 +86,7 @@ export default {
           type: "Galleon",
           length: 2,
           imgURL: require("@/assets/ships/galleon.png"),
+          orientation: "h",
           coords: [],
           hp: 2
         },
@@ -87,6 +95,7 @@ export default {
           type: "Frigate",
           length: 3,
           imgURL: require("@/assets/ships/frigate.png"),
+          orientation: "h",
           coords: [],
           hp: 3
         },
@@ -95,6 +104,7 @@ export default {
           type: "Destroyer",
           length: 4,
           imgURL: require("@/assets/ships/destroyer.png"),
+          orientation: "h",
           coords: [],
           hp: 4
         },
@@ -103,6 +113,7 @@ export default {
           type: "Submarine",
           length: 3,
           imgURL: require("@/assets/ships/submarine.png"),
+          orientation: "h",
           coords: [],
           hp: 3
         },
@@ -111,6 +122,7 @@ export default {
           type: "Carrier",
           length: 5,
           imgURL: require("@/assets/ships/carrier.png"),
+          orientation: "h",
           coords: [],
           hp: 5
         }
@@ -132,8 +144,10 @@ export default {
     startDrag(event, ship) {
       if(this.shipOrientation === 'v'){
         this.unplacedShips.find(unplacedShip => ship===unplacedShip).imgURL=require(`../assets/ships/${ship.type.toLowerCase()}_v.png`)
+        this.unplacedShips.find(unplacedShip => ship===unplacedShip).orientation = 'v'
       } else {
         this.unplacedShips.find(unplacedShip => ship===unplacedShip).imgURL=require(`../assets/ships/${ship.type.toLowerCase()}.png`)
+        this.unplacedShips.find(unplacedShip => ship===unplacedShip).orientation = 'h'
       }
       eventBus.$emit('change-selected-ship', this.unplacedShips.find(unplacedShip => ship===unplacedShip));
 
