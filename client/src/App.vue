@@ -2,7 +2,19 @@
   <div id="app">
 
     <header id="__app_header">
-      <h1>BATTLESHIPS!!</h1>
+      
+      <div class="w-50 h-flex">
+        <div class="w-20">
+          <img src="@/assets/anchor.png" class="logo logo-l" />
+        </div>
+        <div class="w-60">
+          <h1>BATTLESHIPS!!</h1>
+        </div>
+        <div class="w-20">
+          <img src="@/assets/anchor.png" class="logo logo-r" />
+        </div>
+      </div>
+
       <button v-on:click="menuToggle">Menu</button>
 
       <div id="__app_menu" class="menu hidden">
@@ -414,6 +426,9 @@ export default {
 
 
 <style>
+*{
+  font-family: 'Kumbh Sans', sans-serif;
+}
 body{
   margin: 0;
   padding: 0;
@@ -432,12 +447,39 @@ body{
 header{
   padding: 10px;
   text-align: center;
-  background: rgb(233, 233, 233);
+  background: rgb(46, 110, 170);
+}
+header h1{
+  font-family: 'Oswald', sans-serif;
+  font-size: 50px;
 }
 ul{
   margin: 0;
   padding: 0;
   list-style-type: none;
+}
+
+.w-50{
+  width: 50%;
+}
+.w-60{
+  width: 60%;
+}
+.w-20{
+  width: 20%;
+}
+.h-flex{
+  margin: 10px auto;
+  display: flex;
+}
+.logo{
+  height: 150px;
+}
+.logo-l{
+  rotate: 325deg;
+}
+.logo-r{
+  rotate: 25deg;
 }
 
 .game-turn{
@@ -447,7 +489,7 @@ ul{
 .menu{
   margin: 20px 0 0 0;
   padding: 10px;
-  background: rgb(219, 219, 219);
+  background: rgb(46, 131, 211);
 }
 .menu-secondary{
   padding: 10px;
@@ -457,17 +499,29 @@ ul{
 
 label{
   width: 40%;
+  font-size: 20px;
 }
 input{
   margin: 10px;
   padding: 10px 5px;
   width: 60%;
+  border: 2px solid transparent;
+  font-size: 20px;
 }
 
 button, input[type=submit]{
   margin: 0 10px;
   padding: 10px;
   width: 30%;
+  border: 2px solid transparent;
+  background: rgb(20, 68, 112);
+  color: rgb(255, 255, 255);
+  font-size: 20px;
+}
+
+button:hover, input[type=submit]:hover{
+  background: rgb(11, 89, 163);
+  cursor: pointer;
 }
 
 .hidden{
