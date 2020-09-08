@@ -409,6 +409,7 @@ export default {
        player = this.getShooter()
        if (player.ships.notSunk.length !== 0) {
          this.gameState = "inGame"
+         document.querySelector("#__app_create_menu").classList.add("hidden");
        }
     });
 
