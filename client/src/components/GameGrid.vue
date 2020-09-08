@@ -211,8 +211,6 @@ export default {
           newShipImage.height = this.shipOrientation === "h" ? 53 : this.selectedShip.length * 53
           newShipImage.draggable = false
           newShipImage.style.gridArea = this.getGridArea(this.shipOrientation, coords)
-          // newShipImage.style.gridRow = `${startRow} / ${endRow}`
-          // newShipImage.style.gridColumn = `${startCol} / ${endCol}`
           event.target.parentNode.appendChild(newShipImage)
 
           const sourceShip = document.querySelector(`#${this.selectedShip.type}`)
