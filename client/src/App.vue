@@ -3,7 +3,7 @@
 
     <header id="__app_header">
       
-      <div class="w-50 h-flex">
+      <div class="w-60 h-flex">
         <div class="w-20">
           <img src="@/assets/anchor.png" class="logo logo-l" />
         </div>
@@ -479,9 +479,6 @@ ul{
   list-style-type: none;
 }
 
-.w-50{
-  width: 50%;
-}
 .w-60{
   width: 60%;
 }
