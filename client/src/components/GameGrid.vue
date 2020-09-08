@@ -209,6 +209,7 @@ export default {
           newShipImage.width = this.shipOrientation === "h" ? this.selectedShip.length * 53 : 53
           newShipImage.height = this.shipOrientation === "h" ? 53 : this.selectedShip.length * 53
           newShipImage.draggable = false
+          newShipImage.style.zIndex = 2
           newShipImage.style.gridArea = this.getGridArea(this.shipOrientation, coords)
           event.target.parentNode.appendChild(newShipImage)
 

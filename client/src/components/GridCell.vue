@@ -79,10 +79,7 @@ export default {
       }
       return shipCells
     }
-  },
-  mounted() {
-    this.shipCheck();
-  },
+  }
 };
 </script>
 
