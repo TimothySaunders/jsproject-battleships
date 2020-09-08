@@ -149,32 +149,50 @@ export default {
   mounted(){
     eventBus.$on('place-ship', (coords) => {
       const shipIndex = this.unplacedShips.indexOf(this.selectedShip)
-      // shipIndex evaluates to -1 and then to correct value
-        // runs the if statement twice (reason unknown) so always gets it on the second attempt
-      if (shipIndex >= 0) {
-        this.unplacedShips[shipIndex].coords = coords
 
-        // grid rows are numbered 1-8 top-to-botom
-        // our coords are numbered 0-7 bottom-to-top
-        const startRow = 8 - parseInt(coords[0][0])
-        const endRow = this.shipOrientation === "h" ? 8 - parseInt(coords[0][0]) : 8 - parseInt(coords[0][0]) + this.unplacedShips[shipIndex].length
-        const startCol = parseInt(coords[0][1]) + 1
-        const endCol = this.shipOrientation === "v" ? startCol : startCol + this.unplacedShips[shipIndex].length //this is purposefully 1 more than expected- visual error on 2-cell ships otherwise
+      // checks if placed ship overlaps iwth other placed ships
+      const allShipCells = []
+      this.unplacedShips.forEach((ship) => {
+        ship.coords.forEach((coord) => {
+          allShipCells.push(coord)
+        })
+      })
+      let overlap = false;
+      coords.forEach((coord) => {
+        if (allShipCells.includes(coord)) {
+          overlap = true
+        }
+      })
 
-        // builds new ship image and adds to grid
-        const newShipImage = document.createElement("img")
-        newShipImage.classList.add("new-ship-image")
-        newShipImage.src = this.selectedShip.imgURL
-        newShipImage.width = this.shipOrientation === "h" ? this.selectedShip.length * 53 : 53
-        newShipImage.height = this.shipOrientation === "h" ? 53 : this.selectedShip.length * 53
-        newShipImage.draggable = false
-        newShipImage.style.gridRow = `${startRow} / ${endRow}`
-        newShipImage.style.gridColumn = `${startCol} / ${endCol}`
-        event.target.parentNode.appendChild(newShipImage)
+      if (overlap===false) {
 
-        const sourceShip = document.querySelector(`#${this.selectedShip.type}`)
-        sourceShip.draggable = false
-        sourceShip.querySelector("img").style.opacity="0.3"
+        // shipIndex evaluates to -1 and then to correct value
+          // runs the if statement twice (reason unknown) so always gets it on the second attempt
+        if (shipIndex >= 0) {
+          this.unplacedShips[shipIndex].coords = coords
+
+          // grid rows are numbered 1-8 top-to-botom
+          // our coords are numbered 0-7 bottom-to-top
+          const startRow = 8 - parseInt(coords[0][0])
+          const endRow = this.shipOrientation === "h" ? 8 - parseInt(coords[0][0]) : 8 - parseInt(coords[0][0]) + this.unplacedShips[shipIndex].length
+          const startCol = parseInt(coords[0][1]) + 1
+          const endCol = this.shipOrientation === "v" ? startCol : startCol + this.unplacedShips[shipIndex].length //this is purposefully 1 more than expected- visual error on 2-cell ships otherwise
+
+          // builds new ship image and adds to grid
+          const newShipImage = document.createElement("img")
+          newShipImage.classList.add("new-ship-image")
+          newShipImage.src = this.selectedShip.imgURL
+          newShipImage.width = this.shipOrientation === "h" ? this.selectedShip.length * 53 : 53
+          newShipImage.height = this.shipOrientation === "h" ? 53 : this.selectedShip.length * 53
+          newShipImage.draggable = false
+          newShipImage.style.gridRow = `${startRow} / ${endRow}`
+          newShipImage.style.gridColumn = `${startCol} / ${endCol}`
+          event.target.parentNode.appendChild(newShipImage)
+
+          const sourceShip = document.querySelector(`#${this.selectedShip.type}`)
+          sourceShip.draggable = false
+          sourceShip.querySelector("img").style.opacity="0.3"
+        }
       }
     })
   }
