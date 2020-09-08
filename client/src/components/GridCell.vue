@@ -9,7 +9,6 @@
     v-on:dragleave="leaveDrag($event)"
   >
     <p v-if="cell.state !== 'untouched'">&#x25CF;</p>
-    <div v-if="hasShip && playerTurn === player.playerName" class="ship"></div>
   </div>
 </template>
 
@@ -33,25 +32,6 @@ export default {
         }
         break;
       }
-    },
-    shipCheck: function () {
-      // Loop through ships
-      this.ships.forEach((ship) => {
-        // Loop through the ships coords
-        ship.forEach((cell) => {
-          // Turn the ship coords into string
-          const ship_coord = String(cell).split(",");
-          const current_coord = ship_coord[0] + ship_coord[1];
-
-          // Get just coords from cell id
-          const cell_coords = this.cell.coords.x + "" + this.cell.coords.y;
-
-          // Check both coords
-          if (current_coord === cell_coords) {
-            this.hasShip = true;
-          }
-        });
-      });
     },
     
     onDrop(event) {

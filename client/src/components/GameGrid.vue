@@ -10,15 +10,15 @@
         <input type="radio" value="v" name="orientation" v-on:change="changeOrientation()" />
       </div>
       <div
-        v-for="(imgURL, key) in shipImages"
-        :key="key"
+        v-for="(imgURL, index) in shipImages"
+        :key="index"
         class="shipIcon"
-        :class="unplacedShips[key].type.slice(0, 4).toLowerCase()"
+        :class="unplacedShips[index].type.slice(0, 4).toLowerCase()"
         draggable="true"
-        v-on:dragstart="startDrag($event, unplacedShips[key])"
-        :id="unplacedShips[key].type"
+        v-on:dragstart="startDrag($event, unplacedShips[index])"
+        :id="unplacedShips[index].type"
       >
-        <img :src="imgURL" :width="(unplacedShips[key].length * 53)" height="53" draggable="false" />
+        <img :src="imgURL" :width="(unplacedShips[index].length * 53)" height="53" draggable="false" />
       </div>
       <div
         v-for="(imgURL, index) in shipImages"
@@ -44,6 +44,7 @@
         v-for="(cell, key) in player.grid"
         :key="key"
         :cell="cell"
+        class="gridCell"
         :id="'g-' + cell.coords.x + cell.coords.y"
         :noBorder="noBorder"
         :ships="player.ships.notSunk"
@@ -53,6 +54,15 @@
         :player="player"
         :shipOrientation="shipOrientation"
       ></grid-cell>
+      <img v-for="(ship, index) in player.ships.placedShips" 
+      :src="ship.imgURL" 
+      class="shipimg"
+      :class="playerTurn===player.playerName ? '' : 'hidden'"
+      :key="index + 10" 
+      :height="ship.orientation==='v' ? ship.length*53 : 53"
+      :width="ship.orientation==='v' ? 53 : ship.length*53"
+      :style="{'grid-area': getGridArea(ship.orientation, ship.coords)}"
+      >
     </section>
   </div>
 </template>
@@ -78,6 +88,7 @@ export default {
           type: "Galleon",
           length: 2,
           imgURL: require("@/assets/ships/galleon.png"),
+          orientation: "h",
           coords: [],
           hp: 2
         },
@@ -86,6 +97,7 @@ export default {
           type: "Frigate",
           length: 3,
           imgURL: require("@/assets/ships/frigate.png"),
+          orientation: "h",
           coords: [],
           hp: 3
         },
@@ -94,6 +106,7 @@ export default {
           type: "Destroyer",
           length: 4,
           imgURL: require("@/assets/ships/destroyer.png"),
+          orientation: "h",
           coords: [],
           hp: 4
         },
@@ -102,6 +115,7 @@ export default {
           type: "Submarine",
           length: 3,
           imgURL: require("@/assets/ships/submarine.png"),
+          orientation: "h",
           coords: [],
           hp: 3
         },
@@ -110,6 +124,7 @@ export default {
           type: "Carrier",
           length: 5,
           imgURL: require("@/assets/ships/carrier.png"),
+          orientation: "h",
           coords: [],
           hp: 5
         }
@@ -131,8 +146,10 @@ export default {
     startDrag(event, ship) {
       if(this.shipOrientation === 'v'){
         this.unplacedShips.find(unplacedShip => ship===unplacedShip).imgURL=require(`../assets/ships/${ship.type.toLowerCase()}_v.png`)
+        this.unplacedShips.find(unplacedShip => ship===unplacedShip).orientation = 'v'
       } else {
         this.unplacedShips.find(unplacedShip => ship===unplacedShip).imgURL=require(`../assets/ships/${ship.type.toLowerCase()}.png`)
+        this.unplacedShips.find(unplacedShip => ship===unplacedShip).orientation = 'h'
       }
       eventBus.$emit('change-selected-ship', this.unplacedShips.find(unplacedShip => ship===unplacedShip));
 
@@ -148,6 +165,16 @@ export default {
         //remove temporary images of placed ships
         document.querySelectorAll(".grid").forEach(grid => grid.querySelectorAll('.new-ship-image').forEach(node => node.remove()))
       }
+    },
+
+    getGridArea(orientation, shipCells){
+      // grid rows are numbered 1-8 top-to-botom
+      // our coords are numbered 0-7 bottom-to-top
+      const startRow = 8 - parseInt(shipCells[0][0])
+      const endRow = orientation === "h" ? 8 - parseInt(shipCells[0][0]) : 8 - parseInt(shipCells[0][0]) + shipCells.length
+      const startCol = parseInt(shipCells[0][1]) + 1
+      const endCol = orientation === "v" ? startCol : startCol + shipCells.length //this is purposefully 1 more than expected- visual error on 2-cell ships
+      return `${startRow} / ${startCol} / ${endRow} / ${endCol}`
     }
   },
   mounted(){
@@ -175,13 +202,6 @@ export default {
         if (shipIndex >= 0) {
           this.unplacedShips[shipIndex].coords = coords
 
-          // grid rows are numbered 1-8 top-to-botom
-          // our coords are numbered 0-7 bottom-to-top
-          const startRow = 8 - parseInt(coords[0][0])
-          const endRow = this.shipOrientation === "h" ? 8 - parseInt(coords[0][0]) : 8 - parseInt(coords[0][0]) + this.unplacedShips[shipIndex].length
-          const startCol = parseInt(coords[0][1]) + 1
-          const endCol = this.shipOrientation === "v" ? startCol : startCol + this.unplacedShips[shipIndex].length //this is purposefully 1 more than expected- visual error on 2-cell ships otherwise
-
           // builds new ship image and adds to grid
           const newShipImage = document.createElement("img")
           newShipImage.classList.add("new-ship-image")
@@ -189,8 +209,7 @@ export default {
           newShipImage.width = this.shipOrientation === "h" ? this.selectedShip.length * 53 : 53
           newShipImage.height = this.shipOrientation === "h" ? 53 : this.selectedShip.length * 53
           newShipImage.draggable = false
-          newShipImage.style.gridRow = `${startRow} / ${endRow}`
-          newShipImage.style.gridColumn = `${startCol} / ${endCol}`
+          newShipImage.style.gridArea = this.getGridArea(this.shipOrientation, coords)
           event.target.parentNode.appendChild(newShipImage)
 
           const sourceShip = document.querySelector(`#${this.selectedShip.type}`)
@@ -245,6 +264,18 @@ export default {
     ".... .... .... sail sail .... .... ....";
   grid-template-rows: repeat(8, 1fr);
   grid-template-columns: repeat(8, 1fr);
+}
+
+.shipimg {
+  z-index: 1;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.gridCell {
+  z-index: 2;
 }
 
 .unplacedShips > div {
