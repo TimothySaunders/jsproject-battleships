@@ -2,7 +2,16 @@
   <div>
     <!-- ship selection grid-->
     <section v-if="gameState==='setUp:ship-placement' && playerTurn!==player.playerName" class="unplacedShips">
-      <h2 class="head">Position Your Fleet!</h2>
+      <div class="head">
+        <label for="player-name">Player Name: </label>
+        <input
+          name="player-name"
+          class="shipName"
+          type="text"
+          style="width: 150px;"
+          v-model="playerName"
+        />
+      </div>
       <div class="orie">
         <label for="orientation">Horizontal</label>
         <input type="radio" value="h" name="orientation" v-on:change="changeOrientation()" checked />
@@ -130,7 +139,8 @@ export default {
           coords: [],
           hp: 5
         }
-      ]
+      ],
+      playerName: ""
     };
   },
   components: { "grid-cell": GridCell },
@@ -158,7 +168,8 @@ export default {
 
     submitFleet(){
       if (this.unplacedShips.every(ship => ship.coords.length >0)) {
-        eventBus.$emit('submit-positions', this.unplacedShips)
+        const name = this.playerName==="" ? this.playerTurn : this.playerName
+        eventBus.$emit('submit-positions', {"name": name, "ships":this.unplacedShips})
         //remove temporary images of placed ships
         document.querySelectorAll(".grid").forEach(grid => grid.querySelectorAll('.new-ship-image').forEach(node => node.remove()))
       }
@@ -228,7 +239,7 @@ export default {
   height: 424px;
   border-top: 1px solid black;
   border-right: 1px solid black;
-  border: 3px solid black;
+  border: 4px solid black;
   display: grid;
   grid-template-areas:
     "g70 g71 g72 g73 g74 g75 g76 g77"
@@ -251,7 +262,7 @@ export default {
   display: grid;
   width: 424px;
   height: 424px;
-  border: 3px solid black;
+  border: 4px solid black;
   grid-template-areas:
     ".... head head head head head head ...."
     ".... orie orie orie orie orie orie ...."

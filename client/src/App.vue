@@ -15,7 +15,7 @@
         </div>
       </div>
 
-      <button v-on:click="menuToggle">Menu</button>
+      <button class="menu-btn" v-on:click="menuToggle">Menu</button>
 
       <div id="__app_menu" class="menu hidden">
         <button v-on:click="subMenuToggle('create')">New Game</button>
@@ -59,11 +59,11 @@
 
       <div class="flex">
         <div>
-          <p>Player 1 board</p>
+          <p v-if="gameState !== 'setUp:ship-placement'">{{playerOne.playerName}}'s Board</p>
           <game-grid id="p1" :player="playerOne" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip" :shipOrientation="shipOrientation"></game-grid>
         </div>
         <div>
-          <p>Player 2 board</p>
+          <p v-if="gameState !== 'setUp:ship-placement'">{{playerTwo.playerName}}'s Board</p>
           <game-grid id="p2" :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip" :shipOrientation="shipOrientation"></game-grid>
         </div>
       </div>
@@ -197,14 +197,12 @@ export default {
       const gridID = this.playerOne.playerName === this.playerTurn ? "#p2" : "#p1"
       const gif = document.querySelector(`${gridID} > .grid > ${targetID}`)
       const gridArea = `${8 - target.coords.x} / ${target.coords.y + 1} / ${8 - target.coords.x} / ${target.coords.y + 1}`
-      console.log(`x: ${target.coords.x}, y: ${target.coords.y}`)
-      console.log(gridArea)
       gif.style.gridArea = gridArea
       gif.style.visibility = "visible"
       gif.style.zIndex = "3"
       setTimeout(() => {
           gif.style.visibility = "hidden";
-        }, type==="explosion" ? 3000:1500);
+        }, 3000);
     },
 
     getTarget() {
@@ -443,9 +441,11 @@ export default {
       this.shipOrientation = orientation;
     });
 
-    eventBus.$on("submit-positions", (shipPositions) => {
+    eventBus.$on("submit-positions", (setUp) => {
        let player = this.getShooter()
-       player.ships.placedShips = shipPositions
+       player.playerName = setUp.name
+       this.playerTurn = setUp.name
+       player.ships.placedShips = setUp.ships
        player.ships.notSunk = player.ships.placedShips.map((ship) => {
          const cellArray = []
          ship.coords.forEach((coord) => {
@@ -467,11 +467,15 @@ export default {
   computed: {
     message: function() {
       // Provides feedback to the user describing current game state
-      return this.gameState==='inGame'
-        ? `${this.playerTurn}'s turn to Fire!`
-        : `${this.victor} Wins!`;
+      if (this.gameState==='setUp:ship-placement'){
+        return `${this.playerTurn}: Position Your Fleet!`;
+      } else if (this.gameState==='inGame') {
+        return `${this.playerTurn}'s turn to Fire!`;
+      } else {
+        return `${this.victor} Wins!`;
+      }
     }
-  },
+  }
 };
 </script>
 
@@ -496,7 +500,7 @@ body{
 }
 
 header{
-  padding: 10px;
+  /* padding-bottom: 10px; */
   text-align: center;
   background: rgb(46, 110, 170);
 }
@@ -529,7 +533,7 @@ h2 {
   width: 20%;
 }
 .h-flex{
-  margin: 10px auto;
+  margin: 0 auto;
   display: flex;
 }
 .logo{
@@ -549,9 +553,13 @@ h2 {
   text-align: center;
 }
 .menu{
-  margin: 20px 0 0 0;
+  margin: 10px 0 0 0;
   padding: 10px;
   background: rgb(46, 131, 211);
+}
+
+.menu-btn{
+  margin-bottom: 10px;
 }
 .menu-secondary{
   padding: 10px;
