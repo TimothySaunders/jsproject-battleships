@@ -209,13 +209,13 @@ export default {
     switchPlayer(seconds) {
       if (this.playerOne.playerName === this.playerTurn) {
         this.playerTurn = "intermission";
-        ai.filterOutTargeted(this.playerOne);         //!
+        
         setTimeout(() => {
           this.playerTurn = this.playerTwo.playerName;
         }, seconds * 1000);
       } else {
         this.playerTurn = "intermission";
-        ai.filterOutTargeted(this.playerTwo);         //!
+        
         setTimeout(() => {
           this.playerTurn = this.playerOne.playerName;
         }, seconds * 1000);
@@ -404,7 +404,7 @@ export default {
     },
   },
   mounted() {
-    ai.saysomething();
+    // ai.saysomething();
     // this.pullGame();
     this.dbGames();
 
