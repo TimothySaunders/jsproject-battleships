@@ -3,7 +3,7 @@
 
     <header id="__app_header">
       
-      <div class="w-50 h-flex">
+      <div class="w-60 h-flex">
         <div class="w-20">
           <img src="@/assets/anchor.png" class="logo logo-l" />
         </div>
@@ -73,7 +73,7 @@
     <main v-else class="center" id="__app_game">
       <h2>Please start a new game or load a game to continue</h2>
     </main>
-
+    <img v-if="gameState===''" id="footer-image" src="@/assets/sea1.gif">
   </div>
 </template>
 
@@ -492,6 +492,7 @@ ul{
   list-style-type: none;
 }
 
+<<<<<<< HEAD
 #turnOutcome {
   visibility: hidden;
   font-size: 1.4em;
@@ -504,6 +505,8 @@ h2 {
 .w-50{
   width: 50%;
 }
+=======
+>>>>>>> sea_animation_footer
 .w-60{
   width: 60%;
 }
@@ -568,5 +571,13 @@ button:hover, input[type=submit]:hover{
 
 .hidden{
   display: none;
+}
+
+#footer-image {
+  width: 100%;
+  height: 300px;
+  position: fixed;
+  bottom: 0px;
+  z-index: -1;
 }
 </style>
