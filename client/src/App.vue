@@ -162,6 +162,7 @@ export default {
       });
 
       if (isHit) {
+        this.animation(cell, "explosion");
         const coords = String(targ_x) + String(targ_y);
 
         target.ships.placedShips.forEach(ship => {
@@ -179,6 +180,7 @@ export default {
       } else {
         target.grid[key].state = "miss";
         this.turnOutcome = `${this.playerTurn} missed`
+        this.animation(cell, "splash")
       }
       document.querySelector("#turnOutcome").style="font-weight:bold; visibility: visible"
       setTimeout(() => {
@@ -189,6 +191,22 @@ export default {
       // Switches the player after 1 second. Time can be adjusted if need be
       this.switchPlayer(3);
     },
+
+    animation(target, type){
+      const targetID = type==='explosion' ? '#explosionGIF' : '#splashGIF'
+      const gridID = this.playerOne.playerName === this.playerTurn ? "#p2" : "#p1"
+      const gif = document.querySelector(`${gridID} > .grid > ${targetID}`)
+      const gridArea = `${8 - target.coords.x} / ${target.coords.y + 1} / ${8 - target.coords.x} / ${target.coords.y + 1}`
+      console.log(`x: ${target.coords.x}, y: ${target.coords.y}`)
+      console.log(gridArea)
+      gif.style.gridArea = gridArea
+      gif.style.visibility = "visible"
+      gif.style.zIndex = "3"
+      setTimeout(() => {
+          gif.style.visibility = "hidden";
+        }, type==="explosion" ? 3000:1500);
+    },
+
     getTarget() {
       // identify who is getting shot
       return this.playerOne.playerName === this.playerTurn
@@ -492,7 +510,6 @@ ul{
   list-style-type: none;
 }
 
-<<<<<<< HEAD
 #turnOutcome {
   visibility: hidden;
   font-size: 1.4em;
@@ -505,8 +522,6 @@ h2 {
 .w-50{
   width: 50%;
 }
-=======
->>>>>>> sea_animation_footer
 .w-60{
   width: 60%;
 }
