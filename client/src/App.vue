@@ -536,10 +536,12 @@ h2 {
   height: 150px;
 }
 .logo-l{
-  rotate: 325deg;
+  -webkit-transform: rotate(325deg);
+  transform: rotate(325deg);
 }
 .logo-r{
-  rotate: 25deg;
+  -webkit-transform: rotate(25deg);
+  transform: rotate(25deg);
 }
 
 .game-turn{
