@@ -467,11 +467,15 @@ export default {
   computed: {
     message: function() {
       // Provides feedback to the user describing current game state
-      return this.gameState==='inGame'
-        ? `${this.playerTurn}'s turn to Fire!`
-        : `${this.victor} Wins!`;
+      if (this.gameState==='setUp:ship-placement'){
+        return "Board Set-up";
+      } else if (this.gameState==='inGame') {
+        return `${this.playerTurn}'s turn to Fire!`;
+      } else {
+        return `${this.victor} Wins!`;
+      }
     }
-  },
+  }
 };
 </script>
 
