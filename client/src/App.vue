@@ -446,6 +446,7 @@ export default {
     eventBus.$on("submit-positions", (setUp) => {
        let player = this.getShooter()
        player.playerName = setUp.name
+       this.playerTurn = setUp.name
        player.ships.placedShips = setUp.ships
        player.ships.notSunk = player.ships.placedShips.map((ship) => {
          const cellArray = []
