@@ -3,7 +3,6 @@
 
 // Register a hit
 
-
 export default {
 
     // Register a click to memory
@@ -53,7 +52,7 @@ export default {
         let targetsArray = []
         for (let i = 0; i < array.length; i++) {
             if (array[i][2] === "h") {
-                
+
                 let x = parseInt(array[i][0])
                 let y = parseInt(array[i][1])
 
@@ -97,4 +96,43 @@ export default {
         }
         return targetsArray;
     },
+
+    decideMove(player) {
+        if (player.brain.type === 'ai') {
+        let shot = []
+        let avoid = []
+
+        notToHitHash = this.getHashFromHitCells(player)
+        for (let i = 0; i < notToHit.length; i++) {
+            if (notToHit[i][2] != "h") {
+                avoid.push(notToHit[i])
+            };
+        };
+        while (shot.length === 0) {
+            if (player.brain.potentialTargets.length < 1) {
+
+                let x = Math.floor(Math.random() * 7);
+                let y = Math.floor(Math.random() * 7);
+                for (let coords of avoid) {
+                    if (x !== coords[0] && y !== coord[1]) {
+                        shot = Array(x, y);
+                        break;
+                    };
+                };
+            };
+            if (player.brain.potentialTargets.length >= 1) {
+
+                randomIndex = Math.floor(Math.random() * player.brain.potentialTargets.length);
+                shot = player.brain.potentialTargets[randomIndex];
+
+            };
+
+
+        };
+            return shot;
+        }
+    }
+
+
+
 }
