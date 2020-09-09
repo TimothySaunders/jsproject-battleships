@@ -52,9 +52,9 @@
     <main v-if="gameState !== ''" id="__app_game">
 
       <div class="game-turn">
+        <h2 id="turnOutcome">{{ turnOutcome }}</h2>
         <h2 v-if="playerTurn === 'intermission'">Switching player</h2>
         <h2 v-else>{{ message }}</h2>
-        <h2 id="turnOutcome">{{ turnOutcome }}</h2>
       </div>
 
       <div class="flex">
@@ -494,6 +494,7 @@ ul{
 
 #turnOutcome {
   visibility: hidden;
+  font-size: 1.4em;
 }
 
 h2 {
