@@ -8,9 +8,11 @@
           name="player-name"
           class="shipName"
           type="text"
-          style="width: 150px;"
+          style="width: 100px;"
           v-model="playerName"
         />
+        <label class="aicheckbox" for="brain">AI  </label>
+        <input v-model="ai" type="checkbox" name="brain"/>
       </div>
       <div class="orie">
         <label for="orientation">Horizontal</label>
@@ -87,6 +89,7 @@ export default {
   props: ["player", "playerTurn", "gameState", "selectedShip", "shipOrientation"],
   data() {
     return {
+      ai: false,
       shipImages: [
         require("@/assets/ships/galleon.png"), 
         require("@/assets/ships/frigate.png"), 
@@ -155,6 +158,7 @@ export default {
     changeOrientation(){
       eventBus.$emit('change-orientation', event.target.value)
     },
+
     startDrag(event, ship) {
       if(this.shipOrientation === 'v'){
         this.unplacedShips.find(unplacedShip => ship===unplacedShip).imgURL=require(`../assets/ships/${ship.type.toLowerCase()}_v.png`)
@@ -169,7 +173,7 @@ export default {
     submitFleet(){
       if (this.unplacedShips.every(ship => ship.coords.length >0)) {
         const name = this.playerName==="" ? this.playerTurn : this.playerName
-        eventBus.$emit('submit-positions', {"name": name, "ships":this.unplacedShips})
+        eventBus.$emit('submit-positions', {"name": name, "ships":this.unplacedShips, "ai":this.ai})
         //remove temporary images of placed ships
         document.querySelectorAll(".grid").forEach(grid => grid.querySelectorAll('.new-ship-image').forEach(node => node.remove()))
       }
@@ -264,7 +268,7 @@ export default {
   height: 424px;
   border: 4px solid black;
   grid-template-areas:
-    ".... head head head head head head ...."
+    "head head head head head head head head"
     ".... orie orie orie orie orie orie ...."
     "gnam gnam gnam gall gall .... .... ...."
     "fnam fnam fnam frig frig frig .... ...."
@@ -318,6 +322,15 @@ export default {
   cursor: grab;
 }
 
+input[type=checkbox]{
+  width: 30px;
+  margin: 0;
+ 
+}
+.aicheckbox{
+  margin-left: 10px;
+}
+
 .head {
   grid-area: head;
   margin: 10px;
@@ -336,6 +349,11 @@ export default {
 .orie {
   grid-area: orie;
   display: flex;
+}
+.aiselect {
+  grid-area: orie;
+  display: flex;
+  flex-flow: row;
 }
 
 .gall {

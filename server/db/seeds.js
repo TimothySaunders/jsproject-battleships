@@ -14,6 +14,12 @@ db.battleship_save.insertMany(
                 { victor: "" },
                 {
                     playerName: "Player 1",
+                    brain: {
+                        type: "human",
+                        difficulty: "human",
+                        hitHistory: [],
+                        potentialTargets:[],
+                    },
                     ships: {
                         notSunk: [
                             [[2, 3]],
@@ -287,6 +293,12 @@ db.battleship_save.insertMany(
                 },
                 {
                     playerName: "Player 2",
+                    brain: {
+                        type: "human",
+                        difficulty: "human",
+                        hitHistory: [],
+                        potentialTargets:[],
+                    },
                     ships: {
                         notSunk: [
                             [[1, 1]],
