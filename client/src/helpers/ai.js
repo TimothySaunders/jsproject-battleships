@@ -25,15 +25,27 @@ export default {
         );
 
         // this.setPotentialTargets(shooter,cell);
-        this.addPotentialTargets(shooter, cell);
-        this.addPotentialTargetsNEW(shooter, cell);     //! TRYING NEW METHOD
+        ///!    HERE GOES NOTHING 
+
+        let startHash = this.getHashFromHitCells(shooter); // takes an array of hits from a player
+        console.log("startHash",startHash)
+        let newTargets = this.getPotentialTargetsFromHistoryHash(startHash); // tales in the hitHash and converts to hit possibilities
+        console.log("newTargets",newTargets)
+
+
+    
+
+        //! HERE GOES NOTHING  END
+
+        // this.addPotentialTargets(shooter, cell);
+        // this.addPotentialTargetsNEW(shooter, cell);     //! TRYING NEW METHOD
 
     },
 
     // Add potential targets
     // addPotentialTargets: function(a_shooter, a_cell) {
     addPotentialTargetsNEW: function(a_shooter, a_cell) {
-        console.log("NEW");
+        // console.log("NEW");
         let minX = 0; // probably good to have a method to establis grid bounds
         let minY = 0;
         let maxX = 7;
@@ -63,7 +75,7 @@ export default {
         let recordedShotsHash = "";
         player.brain.hitHistory.forEach((shot_cell) => {
             // recordedShotsHash = recordedShotsHash.concat(`${shot_cell.coords.x}${shot_cell.coords.y}${shot_cell.state}`);
-            recordedShotsHash = recordedShotsHash.concat(`${shot_cell.coords.x}${shot_cell.coords.y}a`);
+            recordedShotsHash = recordedShotsHash.concat(`${shot_cell.coords.x}${shot_cell.coords.y}${shot_cell.state.toString().charAt(0)}x`);
         })
         return recordedShotsHash;
 
@@ -71,6 +83,7 @@ export default {
     
 
     getHashfromArrayOfCoordArray: function(ArrayOfArrays){
+        
         let arrayHash = "";
         for (let row of ArrayOfArrays){
             arrayHash = arrayHash.concat(`${row[0]}${row[1]}s`)
@@ -81,6 +94,74 @@ export default {
     
 
     
+    getPotentialTargetsFromHistoryHash: function(hitHistoryHash){
+        let minX = 0; 
+        let minY = 0;
+        let maxX = 7;
+        let maxY = 7;
+
+        // let thehistoryHash = hitHistoryHash;
+
+        let array = hitHistoryHash.split('x') // will create an array of 3chars   2 digits and a letter for state: [xyh] => hit at x,y
+        console.log("array from hitHist",array)
+        let targetsArray = []
+        
+        for (let i=0; i< array.length; i++){
+
+            // console.log("IS ANYONE HERE?", i)
+
+            if (array[i][2]==="h"){
+                console.log("i:",array[i])
+                console.log("newX",parseInt(array[i][0])+1)
+                console.log("newXy",parseInt(array[i][1])+1)
+                let x = parseInt(array[i][0])
+                let y = parseInt(array[i][1])
+                
+
+                // console.log("Newx:",Newx)
+
+
+                
+                if ((x+1) <=maxX){                                // is x+1 out of bounds? 
+                    let TwoChars = '';
+                    let Newx = (x+1);
+                    TwoChars = TwoChars.concat(Newx.toString()+y.toString()) //  34h  ==> 44
+                    if (hitHistoryHash.indexOf(TwoChars.toString()) == -1 && !targetsArray.includes(TwoChars)) {   // is twochars already a hit?   // 34hx52hx
+                        targetsArray.push(TwoChars)                               //  [[44]]
+                        }
+                    }
+
+                if ((x-1) >=minX){                                // is x-1 out of bounds? 
+                    let TwoChars = '';
+                    let Newx = (x-1);
+                    TwoChars = TwoChars.concat(Newx.toString()+y.toString())
+                    if (hitHistoryHash.indexOf(TwoChars.toString())== -1 && !targetsArray.includes(TwoChars)) {   // is twochars already a hit?   
+                        targetsArray.push(TwoChars)
+                        }
+                    }
+
+                if ((y+1) <=maxY){                                // is y+1 out of bounds?
+                    let TwoChars = '';
+                    let NewY = (y+1);
+                    TwoChars = TwoChars.concat(x.toString()+NewY.toString())
+                    if (hitHistoryHash.indexOf(TwoChars.toString())== -1 && !targetsArray.includes(TwoChars)) {   // is twochars already a hit?   
+                        targetsArray.push(TwoChars)
+                        }
+                    }
+                if ((y-1) >=minY){                                // is y-1 out of bounds?
+                    let TwoChars = '';
+                    let NewY = y-1;
+                    TwoChars = TwoChars.concat(x.toString()+NewY.toString())
+                    if (hitHistoryHash.indexOf(TwoChars.toString())== -1 && !targetsArray.includes(TwoChars)) {   // is twochars already a hit?, if not, add it
+                        targetsArray.push(TwoChars)
+                        }
+                    }
+                
+            }
+        }
+        return targetsArray;
+   
+    },
 
     // addPotentialTargetsOLD: function(a_shooter, a_cell) {
     addPotentialTargets: function(a_shooter, a_cell) {
@@ -145,9 +226,10 @@ export default {
         let end3 = [];
         let end4 = [];
         
+        console.log("newHashFromHitHistory to string: ",newHashFromHitHistory.toString())
         start1.forEach((coord) => {
             console.log("coord to string: ",coord.toString())
-            console.log("newHashFromHitHistory to string: ",newHashFromHitHistory.toString())
+            
             
           if (newHashFromHitHistory.toString().indexOf(coord.toString())<0){
                end1.push(coord)
@@ -177,7 +259,11 @@ export default {
         })
         console.log("end4:", end4)
 
+        let newPotHash = this.getHashfromArrayOfCoordArray(end4);
         
+        //51s60s61s52s41s50s51s42s31s40s 
+        
+
         // for(let i=0; i<=newHashfromPotentialTargets.length; i++) {
         //     let TwoChars = "";
         //     TwoChars = TwoChars.concat(newHashfromPotentialTargets.charAt(i)+newHashfromPotentialTargets.charAt(i+1));
@@ -188,13 +274,14 @@ export default {
         //     }
 
         // }
-        console.log("FilteredHASH",newHashFromHitHistory);
+        // console.log("FilteredHASH",newHashFromHitHistory);
+        console.log("FilteredHASH",newPotHash);
         
     },
 
     // Filter missed shots
     filterOutTargeted: function(ashooter) {
-        console.log("Welcome")
+        // console.log("Welcome")
         let shooter = ashooter;
         console.log("shooter",shooter.playerName)
         let potentials = [];
