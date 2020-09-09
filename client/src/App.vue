@@ -15,7 +15,7 @@
         </div>
       </div>
 
-      <button v-on:click="menuToggle">Menu</button>
+      <button class="menu-btn" v-on:click="menuToggle">Menu</button>
 
       <div id="__app_menu" class="menu hidden">
         <button v-on:click="subMenuToggle('create')">New Game</button>
@@ -500,7 +500,7 @@ body{
 }
 
 header{
-  padding: 10px;
+  /* padding-bottom: 10px; */
   text-align: center;
   background: rgb(46, 110, 170);
 }
@@ -533,7 +533,7 @@ h2 {
   width: 20%;
 }
 .h-flex{
-  margin: 10px auto;
+  margin: 0 auto;
   display: flex;
 }
 .logo{
@@ -551,9 +551,13 @@ h2 {
   text-align: center;
 }
 .menu{
-  margin: 20px 0 0 0;
+  margin: 10px 0 0 0;
   padding: 10px;
   background: rgb(46, 131, 211);
+}
+
+.menu-btn{
+  margin-bottom: 10px;
 }
 .menu-secondary{
   padding: 10px;
