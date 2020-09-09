@@ -59,11 +59,11 @@
 
       <div class="flex">
         <div>
-          <p>Player 1 board</p>
+          <p v-if="gameState !== 'setUp:ship-placement'">{{playerOne.playerName}}'s Board</p>
           <game-grid id="p1" :player="playerOne" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip" :shipOrientation="shipOrientation"></game-grid>
         </div>
         <div>
-          <p>Player 2 board</p>
+          <p v-if="gameState !== 'setUp:ship-placement'">{{playerTwo.playerName}}'s Board</p>
           <game-grid id="p2" :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip" :shipOrientation="shipOrientation"></game-grid>
         </div>
       </div>
@@ -443,9 +443,10 @@ export default {
       this.shipOrientation = orientation;
     });
 
-    eventBus.$on("submit-positions", (shipPositions) => {
+    eventBus.$on("submit-positions", (setUp) => {
        let player = this.getShooter()
-       player.ships.placedShips = shipPositions
+       player.playerName = setUp.name
+       player.ships.placedShips = setUp.ships
        player.ships.notSunk = player.ships.placedShips.map((ship) => {
          const cellArray = []
          ship.coords.forEach((coord) => {
@@ -468,7 +469,7 @@ export default {
     message: function() {
       // Provides feedback to the user describing current game state
       if (this.gameState==='setUp:ship-placement'){
-        return "Board Set-up";
+        return `${this.playerTurn}: Position Your Fleet!`;
       } else if (this.gameState==='inGame') {
         return `${this.playerTurn}'s turn to Fire!`;
       } else {
