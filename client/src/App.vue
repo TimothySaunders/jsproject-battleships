@@ -3,7 +3,7 @@
 
     <header id="__app_header">
       
-      <div class="w-50 h-flex">
+      <div class="w-60 h-flex">
         <div class="w-20">
           <img src="@/assets/anchor.png" class="logo logo-l" />
         </div>
@@ -15,7 +15,7 @@
         </div>
       </div>
 
-      <button v-on:click="menuToggle">Menu</button>
+      <button class="menu-btn" v-on:click="menuToggle">Menu</button>
 
       <div id="__app_menu" class="menu hidden">
         <button v-on:click="subMenuToggle('create')">New Game</button>
@@ -52,17 +52,18 @@
     <main v-if="gameState !== ''" id="__app_game">
 
       <div class="game-turn">
+        <h2 id="turnOutcome">{{ turnOutcome }}</h2>
         <h2 v-if="playerTurn === 'intermission'">Switching player</h2>
         <h2 v-else>{{ message }}</h2>
       </div>
 
       <div class="flex">
         <div>
-          <p>Player 1 board</p>
+          <p v-if="gameState !== 'setUp:ship-placement'">{{playerOne.playerName}}'s Board</p>
           <game-grid id="p1" :player="playerOne" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip" :shipOrientation="shipOrientation"></game-grid>
         </div>
         <div>
-          <p>Player 2 board</p>
+          <p v-if="gameState !== 'setUp:ship-placement'">{{playerTwo.playerName}}'s Board</p>
           <game-grid id="p2" :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip" :shipOrientation="shipOrientation"></game-grid>
         </div>
       </div>
@@ -72,7 +73,7 @@
     <main v-else class="center" id="__app_game">
       <h2>Please start a new game or load a game to continue</h2>
     </main>
-
+    <img v-if="gameState===''" id="footer-image" src="@/assets/sea1.gif">
   </div>
 </template>
 
@@ -99,7 +100,8 @@ export default {
       allGames: [],
       menuState: false,
       selectedShip: {},
-      shipOrientation: "h"
+      shipOrientation: "h",
+      turnOutcome: "placeholder"
     }
   },
   components: {
@@ -129,7 +131,6 @@ export default {
 
     checkIfHit(cell) {
       let target = this.getTarget();
-      // console.log("cell: ", cell);
       const key = 8 * cell.coords.x + cell.coords.y;
       let isHit;
       let shipToSinkIndex;
@@ -154,7 +155,6 @@ export default {
             isHit = true;
             shipToSinkIndex = index;
             shipToSink = ship;
-            // console.log(ship)
           }
         }
 
@@ -162,6 +162,7 @@ export default {
       });
 
       if (isHit) {
+        this.animation(cell, "explosion");
         const coords = String(targ_x) + String(targ_y);
 
         target.ships.placedShips.forEach(ship => {
@@ -169,20 +170,41 @@ export default {
             if (coords === ship_coords){
               ship.hp -= 1;
               target.grid[key].state = "hit";
-
+              this.turnOutcome = "It's a Hit!"
               if (ship.hp === 0){
-                this.sinkShip(target, shipToSinkIndex, shipToSink); 
+                this.sinkShip(target, shipToSinkIndex, shipToSink, ship); 
               }
             }
           });
         });
       } else {
         target.grid[key].state = "miss";
+        this.turnOutcome = `${this.playerTurn} missed`
+        this.animation(cell, "splash")
       }
+      document.querySelector("#turnOutcome").style="font-weight:bold; visibility: visible"
+      setTimeout(() => {
+        document.querySelector("#turnOutcome").style="font-weight:normal; visibility: hidden;"
+        this.turnOutcome = "placeholder"
+      }, 3000);
       this.turns += 1;
       // Switches the player after 1 second. Time can be adjusted if need be
       this.switchPlayer(3);
     },
+
+    animation(target, type){
+      const targetID = type==='explosion' ? '#explosionGIF' : '#splashGIF'
+      const gridID = this.playerOne.playerName === this.playerTurn ? "#p2" : "#p1"
+      const gif = document.querySelector(`${gridID} > .grid > ${targetID}`)
+      const gridArea = `${8 - target.coords.x} / ${target.coords.y + 1} / ${8 - target.coords.x} / ${target.coords.y + 1}`
+      gif.style.gridArea = gridArea
+      gif.style.visibility = "visible"
+      gif.style.zIndex = "3"
+      setTimeout(() => {
+          gif.style.visibility = "hidden";
+        }, 3000);
+    },
+
     getTarget() {
       // identify who is getting shot
       return this.playerOne.playerName === this.playerTurn
@@ -212,9 +234,17 @@ export default {
 
     },
 
-    sinkShip(target, index, ship) {
+    sinkShip(target, index, shipToSink, ship) {
+      //sets ship sunk message
+      const shipName = ship.name==="" ? ship.type : `ship ${ship.name}`
+      this.turnOutcome = `${this.playerTurn} sunk ${this.playerTurn === this.playerOne.playerName ? this.playerTwo.playerName : this.playerOne.playerName}s ${shipName}!`
+      document.querySelector("#turnOutcome").style="font-weight:bold; visibility: visible"
+      setTimeout(() => {
+        document.querySelector("#turnOutcome").style="font-weight:normal; visibility: hidden;"
+        this.turnOutcome = "placeholder"
+      }, 3000);
       // Adds ship to sunken array
-      target.ships.sunk.push(ship);
+      target.ships.sunk.push(shipToSink);
       // Sets the winner and ends the game if all ships of target are sunk
       this.checkIfAllSunk(target)
         ? ((this.victor = this.playerTurn),
@@ -411,9 +441,11 @@ export default {
       this.shipOrientation = orientation;
     });
 
-    eventBus.$on("submit-positions", (shipPositions) => {
+    eventBus.$on("submit-positions", (setUp) => {
        let player = this.getShooter()
-       player.ships.placedShips = shipPositions
+       player.playerName = setUp.name
+       this.playerTurn = setUp.name
+       player.ships.placedShips = setUp.ships
        player.ships.notSunk = player.ships.placedShips.map((ship) => {
          const cellArray = []
          ship.coords.forEach((coord) => {
@@ -435,12 +467,15 @@ export default {
   computed: {
     message: function() {
       // Provides feedback to the user describing current game state
-      return this.gameState==='inGame'
-        ? `${this.playerTurn}'s turn to Fire!`
-        : `${this.victor} Wins!`;
+      if (this.gameState==='setUp:ship-placement'){
+        return `${this.playerTurn}: Position Your Fleet!`;
+      } else if (this.gameState==='inGame') {
+        return `${this.playerTurn}'s turn to Fire!`;
+      } else {
+        return `${this.victor} Wins!`;
+      }
     }
-  },
-  watch: {}
+  }
 };
 </script>
 
@@ -465,7 +500,7 @@ body{
 }
 
 header{
-  padding: 10px;
+  /* padding-bottom: 10px; */
   text-align: center;
   background: rgb(46, 110, 170);
 }
@@ -479,6 +514,15 @@ ul{
   list-style-type: none;
 }
 
+#turnOutcome {
+  visibility: hidden;
+  font-size: 1.4em;
+}
+
+h2 {
+  margin: 8px;
+}
+
 .w-50{
   width: 50%;
 }
@@ -489,7 +533,7 @@ ul{
   width: 20%;
 }
 .h-flex{
-  margin: 10px auto;
+  margin: 0 auto;
   display: flex;
 }
 .logo{
@@ -507,9 +551,13 @@ ul{
   text-align: center;
 }
 .menu{
-  margin: 20px 0 0 0;
+  margin: 10px 0 0 0;
   padding: 10px;
   background: rgb(46, 131, 211);
+}
+
+.menu-btn{
+  margin-bottom: 10px;
 }
 .menu-secondary{
   padding: 10px;
@@ -546,5 +594,13 @@ button:hover, input[type=submit]:hover{
 
 .hidden{
   display: none;
+}
+
+#footer-image {
+  width: 100%;
+  height: 300px;
+  position: fixed;
+  bottom: 0px;
+  z-index: -1;
 }
 </style>

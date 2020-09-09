@@ -26,7 +26,7 @@ export default {
   methods: {
     handleSelect() {
       while (this.gameState === "inGame") {
-        if (this.cell.state === "untouched" && !this.noBorder) {
+        if (this.cell.state === "untouched" && !this.noBorder && this.playerTurn !== "intermission") {
           eventBus.$emit("cell-selected", this.cell);
           this.hasShip = false;
         }
