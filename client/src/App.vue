@@ -197,14 +197,12 @@ export default {
       const gridID = this.playerOne.playerName === this.playerTurn ? "#p2" : "#p1"
       const gif = document.querySelector(`${gridID} > .grid > ${targetID}`)
       const gridArea = `${8 - target.coords.x} / ${target.coords.y + 1} / ${8 - target.coords.x} / ${target.coords.y + 1}`
-      console.log(`x: ${target.coords.x}, y: ${target.coords.y}`)
-      console.log(gridArea)
       gif.style.gridArea = gridArea
       gif.style.visibility = "visible"
       gif.style.zIndex = "3"
       setTimeout(() => {
           gif.style.visibility = "hidden";
-        }, type==="explosion" ? 3000:1500);
+        }, 3000);
     },
 
     getTarget() {
