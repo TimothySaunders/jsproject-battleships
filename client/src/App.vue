@@ -52,9 +52,9 @@
     <main v-if="gameState !== ''" id="__app_game">
 
       <div class="game-turn">
-        <h2 v-if="playerTurn === 'intermission' && turnOutcome === ''">Switching player</h2>
-        <h2 v-if="playerTurn !== 'intermission' && turnOutcome === ''">{{ message }}</h2>
-        <h2 v-if="turnOutcome !== ''">{{ turnOutcome }}</h2>
+        <h2 v-if="playerTurn === 'intermission'">Switching player</h2>
+        <h2 v-else>{{ message }}</h2>
+        <h2 id="turnOutcome">{{ turnOutcome }}</h2>
       </div>
 
       <div class="flex">
@@ -101,7 +101,7 @@ export default {
       menuState: false,
       selectedShip: {},
       shipOrientation: "h",
-      turnOutcome: ""
+      turnOutcome: "placeholder"
     }
   },
   components: {
@@ -155,7 +155,6 @@ export default {
             isHit = true;
             shipToSinkIndex = index;
             shipToSink = ship;
-            // console.log(ship)
           }
         }
 
@@ -170,21 +169,22 @@ export default {
             if (coords === ship_coords){
               ship.hp -= 1;
               target.grid[key].state = "hit";
-
+              this.turnOutcome = "It's a Hit!"
               if (ship.hp === 0){
-                this.sinkShip(target, shipToSinkIndex, shipToSink); 
-                const shipName = ship.name==="" ? ship.type : `ship ${ship.name}`
-                this.turnOutcome = `${this.playerTurn} sunk ${this.playerTurn === this.playerOne.playerName ? this.playerTwo.playerName : this.playerOne.playerName}s ${shipName}!`
-                setTimeout(() => {
-                  this.turnOutcome = ""
-                }, 3000);
+                this.sinkShip(target, shipToSinkIndex, shipToSink, ship); 
               }
             }
           });
         });
       } else {
         target.grid[key].state = "miss";
+        this.turnOutcome = `${this.playerTurn} missed`
       }
+      document.querySelector("#turnOutcome").style="font-weight:bold; visibility: visible"
+      setTimeout(() => {
+        document.querySelector("#turnOutcome").style="font-weight:normal; visibility: hidden;"
+        this.turnOutcome = "placeholder"
+      }, 3000);
       this.turns += 1;
       // Switches the player after 1 second. Time can be adjusted if need be
       this.switchPlayer(3);
@@ -218,9 +218,17 @@ export default {
 
     },
 
-    sinkShip(target, index, ship) {
+    sinkShip(target, index, shipToSink, ship) {
+      //sets ship sunk message
+      const shipName = ship.name==="" ? ship.type : `ship ${ship.name}`
+      this.turnOutcome = `${this.playerTurn} sunk ${this.playerTurn === this.playerOne.playerName ? this.playerTwo.playerName : this.playerOne.playerName}s ${shipName}!`
+      document.querySelector("#turnOutcome").style="font-weight:bold; visibility: visible"
+      setTimeout(() => {
+        document.querySelector("#turnOutcome").style="font-weight:normal; visibility: hidden;"
+        this.turnOutcome = "placeholder"
+      }, 3000);
       // Adds ship to sunken array
-      target.ships.sunk.push(ship);
+      target.ships.sunk.push(shipToSink);
       // Sets the winner and ends the game if all ships of target are sunk
       this.checkIfAllSunk(target)
         ? ((this.victor = this.playerTurn),
@@ -441,13 +449,9 @@ export default {
   computed: {
     message: function() {
       // Provides feedback to the user describing current game state
-      if (this.turnOutcome !=="") {
-        return this.turnOutcome
-      } else {
       return this.gameState==='inGame'
         ? `${this.playerTurn}'s turn to Fire!`
         : `${this.victor} Wins!`;
-      }
     }
   },
 };
@@ -490,6 +494,10 @@ ul{
 
 #turnOutcome {
   visibility: hidden;
+}
+
+h2 {
+  margin: 8px;
 }
 
 .w-50{
