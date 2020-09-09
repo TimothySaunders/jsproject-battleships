@@ -452,7 +452,7 @@ export default {
 
       // ai.filterOutTargeted(shooter);         /// !   needs to be modified
 
-      this.switchPlayer(1);
+      this.switchPlayer(3);
     });
 
     eventBus.$on("save-game-selected", (game) => {
