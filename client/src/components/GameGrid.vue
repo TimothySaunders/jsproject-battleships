@@ -2,7 +2,18 @@
   <div>
     <!-- ship selection grid-->
     <section v-if="gameState==='setUp:ship-placement' && playerTurn!==player.playerName" class="unplacedShips">
-      <h2 class="head">Position Your Fleet!</h2>
+      <div class="head">
+        <label for="player-name">Player Name: </label>
+        <input
+          name="player-name"
+          class="shipName"
+          type="text"
+          style="width: 100px;"
+          v-model="playerName"
+        />
+        <label class="aicheckbox" for="brain">AI  </label>
+        <input v-model="ai" type="checkbox" name="brain"/>
+      </div>
       <div class="orie">
         <label for="orientation">Horizontal</label>
         <input type="radio" value="h" name="orientation" v-on:change="changeOrientation()" checked />
@@ -29,7 +40,7 @@
         <input
           class="shipName"
           type="text"
-          style="width: 90px;"
+          style="width: 100px;"
           v-model="unplacedShips[index].name"
         />
       </div>
@@ -38,7 +49,7 @@
     <!-- game grid -->
     <section
       v-if="gameState!=='setUp:ship-placement' ||  playerTurn===player.playerName"
-      class="grid"
+      class="grid" :class="playerTurn!==player.playerName ? 'bold-border' : ''"
     >
       <grid-cell
         v-for="(cell, key) in player.grid"
@@ -63,6 +74,8 @@
       :width="ship.orientation==='v' ? 53 : ship.length*53"
       :style="{'grid-area': getGridArea(ship.orientation, ship.coords)}"
       >
+      <img src="@/assets/explosion.gif" id="explosionGIF" width="53" height="53">
+      <img src="@/assets/splash.gif" id="splashGIF" width="53" height="53">
     </section>
   </div>
 </template>
@@ -76,6 +89,7 @@ export default {
   props: ["player", "playerTurn", "gameState", "selectedShip", "shipOrientation"],
   data() {
     return {
+      ai: false,
       shipImages: [
         require("@/assets/ships/galleon.png"), 
         require("@/assets/ships/frigate.png"), 
@@ -128,7 +142,8 @@ export default {
           coords: [],
           hp: 5
         }
-      ]
+      ],
+      playerName: ""
     };
   },
   components: { "grid-cell": GridCell },
@@ -143,6 +158,7 @@ export default {
     changeOrientation(){
       eventBus.$emit('change-orientation', event.target.value)
     },
+
     startDrag(event, ship) {
       if(this.shipOrientation === 'v'){
         this.unplacedShips.find(unplacedShip => ship===unplacedShip).imgURL=require(`../assets/ships/${ship.type.toLowerCase()}_v.png`)
@@ -152,16 +168,12 @@ export default {
         this.unplacedShips.find(unplacedShip => ship===unplacedShip).orientation = 'h'
       }
       eventBus.$emit('change-selected-ship', this.unplacedShips.find(unplacedShip => ship===unplacedShip));
-
-      //make source ship opaque and undraggable to avoid duplicate drags
-      setTimeout(() => {
-      
-      }, 1)
     },
 
     submitFleet(){
       if (this.unplacedShips.every(ship => ship.coords.length >0)) {
-        eventBus.$emit('submit-positions', this.unplacedShips)
+        const name = this.playerName==="" ? this.playerTurn : this.playerName
+        eventBus.$emit('submit-positions', {"name": name, "ships":this.unplacedShips, "ai":this.ai})
         //remove temporary images of placed ships
         document.querySelectorAll(".grid").forEach(grid => grid.querySelectorAll('.new-ship-image').forEach(node => node.remove()))
       }
@@ -231,6 +243,7 @@ export default {
   height: 424px;
   border-top: 1px solid black;
   border-right: 1px solid black;
+  border: 4px solid black;
   display: grid;
   grid-template-areas:
     "g70 g71 g72 g73 g74 g75 g76 g77"
@@ -253,10 +266,10 @@ export default {
   display: grid;
   width: 424px;
   height: 424px;
-  border: 1px solid black;
+  border: 4px solid black;
   grid-template-areas:
-    ".... head head head head head head ...."
-    ".... .... orie orie orie orie .... ...."
+    "head head head head head head head head"
+    ".... orie orie orie orie orie orie ...."
     "gnam gnam gnam gall gall .... .... ...."
     "fnam fnam fnam frig frig frig .... ...."
     "snam snam snam subm subm subm .... ...."
@@ -265,6 +278,20 @@ export default {
     ".... .... .... sail sail .... .... ....";
   grid-template-rows: repeat(8, 1fr);
   grid-template-columns: repeat(8, 1fr);
+}
+
+.bold-border {
+  border: 4px solid rgb(151, 0, 0);
+}
+
+#explosionGIF {
+  visibility: hidden;
+  grid-area: 1 / 1 / 1 / 1;
+}
+
+#splashGIF {
+  visibility: hidden;
+  grid-area: 1 / 1 / 1 / 1;
 }
 
 .shipimg {
@@ -295,6 +322,15 @@ export default {
   cursor: grab;
 }
 
+input[type=checkbox]{
+  width: 30px;
+  margin: 0;
+ 
+}
+.aicheckbox{
+  margin-left: 10px;
+}
+
 .head {
   grid-area: head;
   margin: 10px;
@@ -305,12 +341,21 @@ export default {
   background-color: lightgrey;
   font-family: "Special Elite", cursive;
   padding: 2px;
+  border: 1px solid black;
+  height: 14px;
+  font-size: 0.8em;
 }
 
 .orie {
   grid-area: orie;
   display: flex;
 }
+.aiselect {
+  grid-area: orie;
+  display: flex;
+  flex-flow: row;
+}
+
 .gall {
   grid-area: gall;
 }
@@ -343,8 +388,9 @@ export default {
 }
 .sail {
   grid-area: sail;
-  margin-top: 16px;
-  padding: 0;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  padding: 6px;
   width: 100px;
 }
 

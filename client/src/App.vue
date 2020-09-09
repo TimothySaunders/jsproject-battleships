@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <header id="__app_header">
-      <div class="w-50 h-flex">
+      
+      <div class="w-60 h-flex">
         <div class="w-20">
           <img src="@/assets/anchor.png" class="logo logo-l" />
         </div>
@@ -49,32 +50,19 @@
 
     <main v-if="gameState !== ''" id="__app_game">
       <div class="game-turn">
+        <h2 id="turnOutcome">{{ turnOutcome }}</h2>
         <h2 v-if="playerTurn === 'intermission'">Switching player</h2>
         <h2 v-else>{{ message }}</h2>
       </div>
 
       <div class="flex">
         <div>
-          <p>Player 1 board</p>
-          <game-grid
-            id="p1"
-            :player="playerOne"
-            :playerTurn="playerTurn"
-            :gameState="gameState"
-            :selectedShip="selectedShip"
-            :shipOrientation="shipOrientation"
-          ></game-grid>
+          <p v-if="gameState !== 'setUp:ship-placement'">{{playerOne.playerName}}'s Board</p>
+          <game-grid id="p1" :player="playerOne" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip" :shipOrientation="shipOrientation"></game-grid>
         </div>
         <div>
-          <p>Player 2 board</p>
-          <game-grid
-            id="p2"
-            :player="playerTwo"
-            :playerTurn="playerTurn"
-            :gameState="gameState"
-            :selectedShip="selectedShip"
-            :shipOrientation="shipOrientation"
-          ></game-grid>
+          <p v-if="gameState !== 'setUp:ship-placement'">{{playerTwo.playerName}}'s Board</p>
+          <game-grid id="p2" :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip" :shipOrientation="shipOrientation"></game-grid>
         </div>
       </div>
     </main>
@@ -82,6 +70,7 @@
     <main v-else class="center" id="__app_game">
       <h2>Please start a new game or load a game to continue</h2>
     </main>
+    <img v-if="gameState===''" id="footer-image" src="@/assets/sea1.gif">
   </div>
 </template>
 
@@ -111,7 +100,8 @@ export default {
       menuState: false,
       selectedShip: {},
       shipOrientation: "h",
-    };
+      turnOutcome: "placeholder"
+    }
   },
   components: {
     "game-grid": GameGrid,
@@ -138,7 +128,6 @@ export default {
 
     checkIfHit(cell) {
       let target = this.getTarget();
-
       const key = 8 * cell.coords.x + cell.coords.y;
       let isHit;
       let shipToSinkIndex;
@@ -161,7 +150,6 @@ export default {
             isHit = true;
             shipToSinkIndex = index;
             shipToSink = ship;
-            // console.log(ship)
           }
         }
 
@@ -169,6 +157,7 @@ export default {
       });
 
       if (isHit) {
+        this.animation(cell, "explosion");
         const coords = String(targ_x) + String(targ_y);
 
         target.ships.placedShips.forEach((ship) => {
@@ -176,23 +165,46 @@ export default {
             if (coords === ship_coords) {
               ship.hp -= 1;
               target.grid[key].state = "hit";
-
-              if (ship.hp === 0) {
-                this.sinkShip(target, shipToSinkIndex, shipToSink);
+              this.turnOutcome = "It's a Hit!"
+              if (ship.hp === 0){
+                this.sinkShip(target, shipToSinkIndex, shipToSink, ship); 
               }
             }
           });
         });
       } else {
         target.grid[key].state = "miss";
+        this.turnOutcome = `${this.playerTurn} missed`
+        this.animation(cell, "splash")
       }
       const shooter = this.getShooter()
       ai.registerClickToMemory(cell,shooter); //! used for AI    !!!
+      document.querySelector("#turnOutcome").style="font-weight:bold; visibility: visible"
+      setTimeout(() => {
+        document.querySelector("#turnOutcome").style="font-weight:normal; visibility: hidden;"
+        this.turnOutcome = "placeholder"
+      }, 3000);
       this.turns += 1;
 
       // Switches the player after 3 second. Time can be adjusted if need be
       // this.switchPlayer(3);
     },
+
+    animation(target, type){
+      const targetID = type==='explosion' ? '#explosionGIF' : '#splashGIF'
+      const gridID = this.playerOne.playerName === this.playerTurn ? "#p2" : "#p1"
+      const gif = document.querySelector(`${gridID} > .grid > ${targetID}`)
+      const gridArea = `${8 - target.coords.x} / ${target.coords.y + 1} / ${8 - target.coords.x} / ${target.coords.y + 1}`
+      console.log(`x: ${target.coords.x}, y: ${target.coords.y}`)
+      console.log(gridArea)
+      gif.style.gridArea = gridArea
+      gif.style.visibility = "visible"
+      gif.style.zIndex = "3"
+      setTimeout(() => {
+          gif.style.visibility = "hidden";
+        }, type==="explosion" ? 3000:1500);
+    },
+
     getTarget() {
       // identify who is getting shot
       return this.playerOne.playerName === this.playerTurn
@@ -212,19 +224,48 @@ export default {
         
         setTimeout(() => {
           this.playerTurn = this.playerTwo.playerName;
+          if (this.playerTwo.brain.type==="ai"){
+            console.log("am i even here 1?");
+            let target = ai.decideMove(this.playerTwo);
+            console.log("target",target);
+            let targetCell = this.playerOne.grid.find(cell => cell.coords.x===target[0] && cell.coords===target[1]);
+            
+            console.log("targetCell",targetCell);
+            eventBus.$emit("cell-selected", targetCell);
+          } 
         }, seconds * 1000);
       } else {
         this.playerTurn = "intermission";
         
         setTimeout(() => {
           this.playerTurn = this.playerOne.playerName;
+          if (this.playerOne.brain.type==="ai") {
+            console.log("am i even here 2?");
+            let target = ai.decideMove(this.playerOne);
+            console.log("target0",target[0]);
+            console.log("target1",target[1]);
+
+            let targetCell = this.playerTwo.grid.find(cell => {
+              return cell.coords.x===parseInt(target[0]) && cell.coords.y===parseInt(target[1]);
+            })
+            console.log("targetCell",targetCell);
+            eventBus.$emit("cell-selected", targetCell);
+          }
         }, seconds * 1000);
       }
     },
 
-    sinkShip(target, index, ship) {
+    sinkShip(target, index, shipToSink, ship) {
+      //sets ship sunk message
+      const shipName = ship.name==="" ? ship.type : `ship ${ship.name}`
+      this.turnOutcome = `${this.playerTurn} sunk ${this.playerTurn === this.playerOne.playerName ? this.playerTwo.playerName : this.playerOne.playerName}s ${shipName}!`
+      document.querySelector("#turnOutcome").style="font-weight:bold; visibility: visible"
+      setTimeout(() => {
+        document.querySelector("#turnOutcome").style="font-weight:normal; visibility: hidden;"
+        this.turnOutcome = "placeholder"
+      }, 3000);
       // Adds ship to sunken array
-      target.ships.sunk.push(ship);
+      target.ships.sunk.push(shipToSink);
       // Sets the winner and ends the game if all ships of target are sunk
       this.checkIfAllSunk(target)
         ? ((this.victor = this.playerTurn),
@@ -428,34 +469,43 @@ export default {
       this.shipOrientation = orientation;
     });
 
-    eventBus.$on("submit-positions", (shipPositions) => {
-      let player = this.getShooter();
-      player.ships.placedShips = shipPositions;
-      player.ships.notSunk = player.ships.placedShips.map((ship) => {
-        const cellArray = [];
-        ship.coords.forEach((coord) => {
-          cellArray.push([coord[0], coord[1]]);
-        });
-        return cellArray;
-      });
-      this.shipOrientation = "h";
-      this.switchPlayer();
-      player = this.getShooter();
-      if (player.ships.notSunk.length !== 0) {
-        this.gameState = "inGame";
-        document.querySelector("#__app_create_menu").classList.add("hidden");
-      }
+    eventBus.$on("submit-positions", (setUp) => {
+       let player = this.getShooter()
+       if (setUp.ai === true) {
+         player.brain.type = "ai"
+       }
+       
+       player.playerName = setUp.name
+       this.playerTurn = setUp.name
+       player.ships.placedShips = setUp.ships
+       player.ships.notSunk = player.ships.placedShips.map((ship) => {
+         const cellArray = []
+         ship.coords.forEach((coord) => {
+            cellArray.push([coord[0], coord[1]])
+         })
+         return cellArray
+       })
+       this.shipOrientation = "h"
+       this.switchPlayer()
+       player = this.getShooter()
+       if (player.ships.notSunk.length !== 0) {
+         this.gameState = "inGame"
+         document.querySelector("#__app_create_menu").classList.add("hidden");
+       }
     });
   },
   computed: {
     message: function () {
       // Provides feedback to the user describing current game state
-      return this.gameState === "inGame"
-        ? `${this.playerTurn}'s turn to Fire!`
-        : `${this.victor} Wins!`;
-    },
-  },
-  watch: {},
+      if (this.gameState==='setUp:ship-placement'){
+        return `${this.playerTurn}: Position Your Fleet!`;
+      } else if (this.gameState==='inGame') {
+        return `${this.playerTurn}'s turn to Fire!`;
+      } else {
+        return `${this.victor} Wins!`;
+      }
+    }
+  }
 };
 </script>
 
@@ -494,7 +544,16 @@ ul {
   list-style-type: none;
 }
 
-.w-50 {
+#turnOutcome {
+  visibility: hidden;
+  font-size: 1.4em;
+}
+
+h2 {
+  margin: 8px;
+}
+
+.w-50{
   width: 50%;
 }
 .w-60 {
@@ -563,5 +622,13 @@ input[type="submit"]:hover {
 
 .hidden {
   display: none;
+}
+
+#footer-image {
+  width: 100%;
+  height: 300px;
+  position: fixed;
+  bottom: 0px;
+  z-index: -1;
 }
 </style>
