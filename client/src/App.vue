@@ -177,7 +177,7 @@ export default {
         this.turnOutcome = `${this.playerTurn} missed`
         this.animation(cell, "splash")
       }
-      const shooter = this.getShooter()
+      const shooter = this.getShooter();
       ai.registerClickToMemory(cell,shooter); //! used for AI    !!!
       document.querySelector("#turnOutcome").style="font-weight:bold; visibility: visible"
       setTimeout(() => {

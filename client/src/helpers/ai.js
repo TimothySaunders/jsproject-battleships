@@ -100,6 +100,7 @@ export default {
     },
 
     decideMove(player) {
+        console.log("in DecideMove")
         if (player.brain.type === 'ai') {
         let shot = []
         let avoid = []
@@ -110,17 +111,27 @@ export default {
                 avoid.push(notToHit[i])
             };
         };
+
         while (shot.length === 0) {
+            console.log("inside decide move WHILE")
             if (player.brain.potentialTargets.length < 1) {
 
                 let x = Math.floor(Math.random() * 7);
                 let y = Math.floor(Math.random() * 7);
-                for (let coords of avoid) {
-                    if (x !== coords[0] && y !== coord[1]) {
-                        shot = Array(x,y);
-                        break;
-                    };
-                };
+                console.log("x :",x )
+                console.log("y :",y )
+                
+                if (avoid.length===0) {
+                    shot = Array(x,y);
+                }
+                else {
+                    for (let coords of avoid) {
+                        if (x !== coords[0] && y !== coord[1]) {
+                            console.log("shot :",shot )
+                            shot = Array(x,y);
+                            break;
+                        };
+                };}
             };
             if (player.brain.potentialTargets.length >= 1) {
 
