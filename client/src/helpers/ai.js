@@ -48,7 +48,8 @@ export default {
         let maxY = 7;
 
         // let thehistoryHash = hitHistoryHash;
-        let array = hitHistoryHash.split('x') // will create an array of 3chars   2 digits and a letter for state: [xyh] => hit at x,y     
+        let array = hitHistoryHash.split('x') // will create an array of 3chars   2 digits and a letter for state: [xyh] => hit at x,y    
+        console.log("hit history hash:", hitHistoryHash)   
         let targetsArray = []
         for (let i = 0; i < array.length; i++) {
             if (array[i][2] === "h") {
@@ -94,6 +95,7 @@ export default {
 
             }
         }
+        console.log("targetsArray: " , targetsArray)
         return targetsArray;
     },
 
