@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-
     <header id="__app_header">
       
       <div class="w-60 h-flex">
@@ -27,7 +26,8 @@
     <div id="__app_create_menu" class="menu-secondary hidden">
       <form v-on:submit.prevent="newGameGenerator">
         <label for="game_name_new">Game Name:</label>
-        <input type="text" id="game_name_new" v-model="gameName" placeholder="Game Name" required /><br />
+        <input type="text" id="game_name_new" v-model="gameName" placeholder="Game Name" required />
+        <br />
         <input type="submit" value="Create Game" />
       </form>
       <!-- Add to this when we create different size boards && personal placement -->
@@ -40,17 +40,15 @@
     </div>
 
     <div id="__app_save_menu" class="menu-secondary hidden">
-
       <form v-on:submit.prevent="saveGame">
         <label for="game_name_save">Game Name:</label>
-        <input type="text" id="game_name_save" v-model="gameName" placeholder="Game Name" required /><br />
+        <input type="text" id="game_name_save" v-model="gameName" placeholder="Game Name" required />
+        <br />
         <input type="submit" value="Save Game" />
       </form>
-
     </div>
 
     <main v-if="gameState !== ''" id="__app_game">
-
       <div class="game-turn">
         <h2 id="turnOutcome">{{ turnOutcome }}</h2>
         <h2 v-if="playerTurn === 'intermission'">Switching player</h2>
@@ -67,7 +65,6 @@
           <game-grid id="p2" :player="playerTwo" :playerTurn="playerTurn" :gameState="gameState" :selectedShip="selectedShip" :shipOrientation="shipOrientation"></game-grid>
         </div>
       </div>
-
     </main>
 
     <main v-else class="center" id="__app_game">
@@ -82,6 +79,8 @@
 import GameGrid from "./components/GameGrid.vue";
 import GameItem from "./components/GameItem.vue";
 import GameService from "./services/GameService.js";
+import ai from "./helpers/ai.js";
+
 import { eventBus } from "@/main.js";
 
 // APP Component
@@ -106,28 +105,26 @@ export default {
   },
   components: {
     "game-grid": GameGrid,
-    "game-item": GameItem
+    "game-item": GameItem,
   },
   methods: {
-
-    createGrid(){
+    createGrid() {
       const max_x = 7;
       const max_y = 7;
       const grid = [];
 
-      for (let i=0; i<=max_x;i++){
-        for(let j=0;j<=max_y;j++){
+      for (let i = 0; i <= max_x; i++) {
+        for (let j = 0; j <= max_y; j++) {
           const cell = {
-            coords: {x: i, y: j},
-            state: "untouched"
-          }
+            coords: { x: i, y: j },
+            state: "untouched",
+          };
           grid.push(cell);
         }
       }
 
       return grid;
     },
-
 
     checkIfHit(cell) {
       let target = this.getTarget();
@@ -138,16 +135,14 @@ export default {
       let targ_x;
       let targ_y;
 
-      target.ships.notSunk.forEach(ship => {
+      target.ships.notSunk.forEach((ship) => {
         let index = 0;
-        
-        for (let ship_coords of ship){
 
+        for (let ship_coords of ship) {
           const x = parseInt(ship_coords[0]);
           const y = parseInt(ship_coords[1]);
-          
+
           if (x === cell.coords.x && y === cell.coords.y) {
-            
             // Checks if the coords of the ship selected has a ship in it
             targ_x = x;
             targ_y = y;
@@ -165,9 +160,9 @@ export default {
         this.animation(cell, "explosion");
         const coords = String(targ_x) + String(targ_y);
 
-        target.ships.placedShips.forEach(ship => {
-          ship.coords.forEach(ship_coords => {
-            if (coords === ship_coords){
+        target.ships.placedShips.forEach((ship) => {
+          ship.coords.forEach((ship_coords) => {
+            if (coords === ship_coords) {
               ship.hp -= 1;
               target.grid[key].state = "hit";
               this.turnOutcome = "It's a Hit!"
@@ -182,14 +177,17 @@ export default {
         this.turnOutcome = `${this.playerTurn} missed`
         this.animation(cell, "splash")
       }
+      const shooter = this.getShooter()
+      ai.registerClickToMemory(cell,shooter); //! used for AI    !!!
       document.querySelector("#turnOutcome").style="font-weight:bold; visibility: visible"
       setTimeout(() => {
         document.querySelector("#turnOutcome").style="font-weight:normal; visibility: hidden;"
         this.turnOutcome = "placeholder"
       }, 3000);
       this.turns += 1;
-      // Switches the player after 1 second. Time can be adjusted if need be
-      this.switchPlayer(3);
+
+      // Switches the player after 3 second. Time can be adjusted if need be
+      // this.switchPlayer(3);
     },
 
     animation(target, type){
@@ -211,27 +209,48 @@ export default {
         ? this.playerTwo
         : this.playerOne;
     },
+    getShooter() {
+      //! used for AI
+      return this.playerOne.playerName === this.playerTurn
+        ? this.playerOne
+        : this.playerTwo;
+    },
 
     switchPlayer(seconds) {
-
-      if (this.playerOne.playerName === this.playerTurn){
-        
+      if (this.playerOne.playerName === this.playerTurn) {
         this.playerTurn = "intermission";
-
+        
         setTimeout(() => {
           this.playerTurn = this.playerTwo.playerName;
-        }, seconds*1000);
-
+          if (this.playerTwo.brain.type==="ai"){
+            console.log("am i even here 1?");
+            let target = ai.decideMove(this.playerTwo);
+            console.log("target",target);
+            let targetCell = this.playerOne.grid.find(cell => cell.coords.x===target[0] && cell.coords===target[1]);
+            
+            console.log("targetCell",targetCell);
+            eventBus.$emit("cell-selected", targetCell);
+          } 
+        }, seconds * 1000);
       } else {
-
         this.playerTurn = "intermission";
-
+        
         setTimeout(() => {
           this.playerTurn = this.playerOne.playerName;
-        }, seconds*1000);
+          if (this.playerOne.brain.type==="ai") {
+            console.log("am i even here 2?");
+            let target = ai.decideMove(this.playerOne);
+            console.log("target0",target[0]);
+            console.log("target1",target[1]);
 
+            let targetCell = this.playerTwo.grid.find(cell => {
+              return cell.coords.x===parseInt(target[0]) && cell.coords.y===parseInt(target[1]);
+            })
+            console.log("targetCell",targetCell);
+            eventBus.$emit("cell-selected", targetCell);
+          }
+        }, seconds * 1000);
       }
-
     },
 
     sinkShip(target, index, shipToSink, ship) {
@@ -248,16 +267,16 @@ export default {
       // Sets the winner and ends the game if all ships of target are sunk
       this.checkIfAllSunk(target)
         ? ((this.victor = this.playerTurn),
-          (this.gameState = 'endGame'),
+          (this.gameState = "endGame"),
           (this.playerTurn = null))
-        : (this.gameState = 'inGame');
+        : (this.gameState = "inGame");
     },
 
     checkIfAllSunk(player) {
       return player.ships.notSunk.length === player.ships.sunk.length;
     },
 
-    newGameGenerator(){
+    newGameGenerator() {
       // Set game state to setUp
       this.gameState = "setUp";
       const p1_grid = this.createGrid();
@@ -266,35 +285,47 @@ export default {
       // Set up the players
       this.playerOne = {
         playerName: "Player 1",
+        brain: {
+          type: "human",
+          difficulty: "human",
+          hitHistory: [],
+          potentialTargets: [],
+        },
         ships: {
           notSunk: [],
-          sunk: []
+          sunk: [],
         },
-        grid: p1_grid
-      }
+        grid: p1_grid,
+      };
 
       this.playerTwo = {
         playerName: "Player 2",
+        brain: {
+          type: "human",
+          difficulty: "human",
+          hitHistory: [],
+          potentialTargets: [],
+        },
         ships: {
           notSunk: [],
-          sunk: []
+          sunk: [],
         },
-        grid: p2_grid
-      }
+        grid: p2_grid,
+      };
 
       // Set game state to setUp:ship-placement
       this.gameState = "setUp:ship-placement";
-
     },
+
     
+
     saveGame() {
-      // Grab the elements needed 
+      // Grab the elements needed
       const game_area = document.querySelector("#__app_game");
       const save_form = document.querySelector("#__app_save_menu");
 
-      if (this.gameName !== ""){
-
-        if (GameService.getById(this.gameID) && this.gameID !== ""){
+      if (this.gameName !== "") {
+        if (GameService.getById(this.gameID) && this.gameID !== "") {
           const game_to_save = {
             // creates a game object to hold current game state and populates game_to_save with current state
             game: [
@@ -304,13 +335,12 @@ export default {
               { gamingRunning: this.gamingRunning },
               { victor: this.victor },
               this.playerOne,
-              this.playerTwo
-            ]
+              this.playerTwo,
+            ],
           };
 
           // Update DB
           GameService.updateGame(this.gameID, game_to_save);
-
         } else {
           const game_to_save = {
             // creates a game object to hold current game state and populates game_to_save with current state
@@ -321,8 +351,8 @@ export default {
               { gameState: this.gameState },
               { victor: this.victor },
               this.playerOne,
-              this.playerTwo
-            ]
+              this.playerTwo,
+            ],
           };
 
           // Add to DB
@@ -335,50 +365,42 @@ export default {
       }
     },
 
-    getShooter() {
-      
-      return this.playerOne.playerName === this.playerTurn
-        ? this.playerOne
-        : this.playerTwo;
-    },
-
     pullGame(game = null) {
       // Grab the required areas
       const load_menu = document.querySelector("#__app_load_menu");
       const game_area = document.querySelector("#__app_game");
 
       // Run  check
-      if (game !== null){
-        GameService.getById(game._id)
-        .then(result => {
-            this.gameID = result._id;
-            this.playerOne = result.game[5];
-            this.playerTwo = result.game[6];
-            this.playerTurn = result.game[1].playerTurn;
-            this.turns = result.game[2].turns;
-            this.gameState = result.game[3].gameState;
-            this.victor = result.game[4].victor;
-            this.gameName = result.game[0].name;
+      if (game !== null) {
+        GameService.getById(game._id).then((result) => {
+          this.gameID = result._id;
+          this.playerOne = result.game[5];
+          this.playerTwo = result.game[6];
+          this.playerTurn = result.game[1].playerTurn;
+          this.turns = result.game[2].turns;
+          this.gameState = result.game[3].gameState;
+          this.victor = result.game[4].victor;
+          this.gameName = result.game[0].name;
 
-            this.playerTurn = this.playerOne.playerName;
-            this.gameState = 'inGame';
+          this.playerTurn = this.playerOne.playerName;
+          this.gameState = "inGame";
 
-            // Hide/Show as appropriate
-            game_area.classList.remove("hidden");
-            load_menu.classList.add("hidden");
+          // Hide/Show as appropriate
+          game_area.classList.remove("hidden");
+          load_menu.classList.add("hidden");
         });
       }
     },
-    menuToggle: function(){
+    menuToggle: function () {
       // Grab the main menu
-      const menu = document.querySelector('#__app_menu');
+      const menu = document.querySelector("#__app_menu");
 
       // Grab all submenus
       const save_menu = document.querySelector("#__app_save_menu");
       const load_menu = document.querySelector("#__app_load_menu");
       const create_menu = document.querySelector("#__app_create_menu");
 
-      if (this.menuState === false){
+      if (this.menuState === false) {
         menu.classList.remove("hidden");
         this.menuState = true;
       } else {
@@ -389,7 +411,7 @@ export default {
         this.menuState = false;
       }
     },
-    subMenuToggle: function(menu) {
+    subMenuToggle: function (menu) {
       // Grab all submenus
       const save_menu = document.querySelector("#__app_save_menu");
       const load_menu = document.querySelector("#__app_load_menu");
@@ -416,33 +438,41 @@ export default {
         save_menu.classList.remove("hidden");
       }
     },
-    dbGames: function(){
-      GameService.getGame()
-      .then(result => this.allGames = result)
-    }
+    dbGames: function () {
+      GameService.getGame().then((result) => (this.allGames = result));
+    },
   },
   mounted() {
+    // ai.saysomething();
     // this.pullGame();
     this.dbGames();
 
-    eventBus.$on("cell-selected", cell => {
+    eventBus.$on("cell-selected", (cell) => {
       this.checkIfHit(cell);
+
+      // ai.filterOutTargeted(shooter);         /// !   needs to be modified
+
+      this.switchPlayer(3);
     });
 
-    eventBus.$on("save-game-selected", game => {
+    eventBus.$on("save-game-selected", (game) => {
       this.pullGame(game);
     });
-    
+
     eventBus.$on("change-selected-ship", (ship) => {
       this.selectedShip = ship;
     });
 
-    eventBus.$on('change-orientation', orientation => {
+    eventBus.$on("change-orientation", (orientation) => {
       this.shipOrientation = orientation;
     });
 
     eventBus.$on("submit-positions", (setUp) => {
        let player = this.getShooter()
+       if (setUp.ai === true) {
+         player.brain.type = "ai"
+       }
+       
        player.playerName = setUp.name
        this.playerTurn = setUp.name
        player.ships.placedShips = setUp.ships
@@ -461,11 +491,9 @@ export default {
          document.querySelector("#__app_create_menu").classList.add("hidden");
        }
     });
-
-
   },
   computed: {
-    message: function() {
+    message: function () {
       // Provides feedback to the user describing current game state
       if (this.gameState==='setUp:ship-placement'){
         return `${this.playerTurn}: Position Your Fleet!`;
@@ -481,21 +509,21 @@ export default {
 
 
 <style>
-*{
-  font-family: 'Kumbh Sans', sans-serif;
+* {
+  font-family: "Kumbh Sans", sans-serif;
 }
-body{
+body {
   margin: 0;
   padding: 0;
 }
 
-.flex{
+.flex {
   height: 500px;
   width: 100%;
   display: flex;
   justify-content: space-evenly;
 }
-.center{
+.center {
   text-align: center;
 }
 
@@ -504,11 +532,11 @@ header{
   text-align: center;
   background: rgb(46, 110, 170);
 }
-header h1{
-  font-family: 'Oswald', sans-serif;
+header h1 {
+  font-family: "Oswald", sans-serif;
   font-size: 50px;
 }
-ul{
+ul {
   margin: 0;
   padding: 0;
   list-style-type: none;
@@ -526,17 +554,17 @@ h2 {
 .w-50{
   width: 50%;
 }
-.w-60{
+.w-60 {
   width: 60%;
 }
-.w-20{
+.w-20 {
   width: 20%;
 }
 .h-flex{
   margin: 0 auto;
   display: flex;
 }
-.logo{
+.logo {
   height: 150px;
 }
 .logo-l{
@@ -548,7 +576,7 @@ h2 {
   transform: rotate(25deg);
 }
 
-.game-turn{
+.game-turn {
   margin: 20px;
   text-align: center;
 }
@@ -567,11 +595,11 @@ h2 {
   text-align: center;
 }
 
-label{
+label {
   width: 40%;
   font-size: 20px;
 }
-input{
+input {
   margin: 10px;
   padding: 10px 5px;
   width: 60%;
@@ -579,7 +607,8 @@ input{
   font-size: 20px;
 }
 
-button, input[type=submit]{
+button,
+input[type="submit"] {
   margin: 0 10px;
   padding: 10px;
   width: 30%;
@@ -589,12 +618,13 @@ button, input[type=submit]{
   font-size: 20px;
 }
 
-button:hover, input[type=submit]:hover{
+button:hover,
+input[type="submit"]:hover {
   background: rgb(11, 89, 163);
   cursor: pointer;
 }
 
-.hidden{
+.hidden {
   display: none;
 }
 
