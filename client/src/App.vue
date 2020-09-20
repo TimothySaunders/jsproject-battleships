@@ -217,18 +217,24 @@ export default {
     },
 
     switchPlayer(seconds) {
+      if (this.gameState !== "endGame") {  //! Added IF not endgame
       if (this.playerOne.playerName === this.playerTurn) {
         this.playerTurn = "intermission";
         
         setTimeout(() => {
           this.playerTurn = this.playerTwo.playerName;
           if (this.playerTwo.brain.type==="ai"){
-            console.log("am i even here 1?");
-            let target = ai.decideMove(this.playerTwo);
-            console.log("target",target);
-            let targetCell = this.playerOne.grid.find(cell => cell.coords.x===target[0] && cell.coords===target[1]);
+            console.log("p1:");
+            let target = ai.decideMove2(this.playerTwo);
+            // let target = ai.decideMove(this.playerTwo);
+            console.log("p1: target",target);
+
+            // let targetCell = this.playerOne.grid.find(cell => cell.coords.x===target[0] && cell.coords===target[1]);
+            let targetCell = this.playerOne.grid.find(cell => {
+              return cell.coords.x===parseInt(target[0]) && cell.coords.y===parseInt(target[1]);
+            })
             
-            console.log("targetCell",targetCell);
+            // console.log("targetCell",targetCell);
             eventBus.$emit("cell-selected", targetCell);
           } 
         }, seconds * 1000);
@@ -238,19 +244,25 @@ export default {
         setTimeout(() => {
           this.playerTurn = this.playerOne.playerName;
           if (this.playerOne.brain.type==="ai") {
-            console.log("am i even here 2?");
-            let target = ai.decideMove(this.playerOne);
-            console.log("target0",target[0]);
-            console.log("target1",target[1]);
+            console.log("p2:");
+            let target = ai.decideMove2(this.playerOne);
+            // let target = ai.decideMove(this.playerOne);
+            console.log("p2: target",target);
+            // console.log("target0",target[0]);
+            // console.log("target1",target[1]);
 
             let targetCell = this.playerTwo.grid.find(cell => {
               return cell.coords.x===parseInt(target[0]) && cell.coords.y===parseInt(target[1]);
             })
-            console.log("targetCell",targetCell);
+
+
+            // console.log("targetCell",targetCell);
             eventBus.$emit("cell-selected", targetCell);
           }
         }, seconds * 1000);
       }
+
+      }  //! Added WHILE not endgame
     },
 
     sinkShip(target, index, shipToSink, ship) {
@@ -484,7 +496,7 @@ export default {
          return cellArray
        })
        this.shipOrientation = "h"
-       this.switchPlayer()
+       this.switchPlayer(1)
        player = this.getShooter()
        if (player.ships.notSunk.length !== 0) {
          this.gameState = "inGame"
